@@ -97,14 +97,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.1.2"
-  hotreloader:
-    dependency: "direct main"
-    description:
-      name: hotreloader
-      sha256: "94ee21a60ea2836500799f3af035dc3212b1562027f1e0031c14e087f0231449"
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "4.1.0"
   http_multi_server:
     dependency: transitive
     description:
@@ -289,14 +281,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.1.2"
-  stream_transform:
-    dependency: transitive
-    description:
-      name: stream_transform
-      sha256: "14a00e794c7c11aa145a170587321aedce29769c08d7f58b1d141da75e3b1c6f"
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "2.1.0"
   string_scanner:
     dependency: transitive
     description:
