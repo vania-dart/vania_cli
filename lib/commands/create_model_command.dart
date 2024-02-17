@@ -50,7 +50,7 @@ class CreateModelCommand extends Command {
     String modelName = arguments[0];
 
     String filePath =
-        'lib\\app\\models\\${pascalToSnake(modelName)}.dart';
+        '${Directory.current.path}\\lib\\app\\models\\${pascalToSnake(modelName)}.dart';
     File newFile = File(filePath);
 
     if (newFile.existsSync()) {

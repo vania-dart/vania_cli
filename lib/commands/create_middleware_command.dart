@@ -40,7 +40,7 @@ class CreateMiddlewareCommand extends Command {
     String middlewareName = arguments[0];
 
     String filePath =
-        'lib\\app\\http\\middleware\\${pascalToSnake(middlewareName)}.dart';
+        '${Directory.current.path}\\lib\\app\\http\\middleware\\${pascalToSnake(middlewareName)}.dart';
     File newFile = File(filePath);
 
     if (newFile.existsSync()) {

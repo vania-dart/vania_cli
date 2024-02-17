@@ -12,7 +12,7 @@ class BuildCommand extends Command {
 
   @override
   void execute(List<String> arguments) async {
-    print("\x1B[32m Strting to build ... \x1B[0m");
+    print("\x1B[32m Starting to build ... \x1B[0m");
     var process = await Process.start(
         'dart', ['compile', 'exe', 'bin/server.dart', '-o', 'bin/server']);
 

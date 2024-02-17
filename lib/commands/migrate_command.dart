@@ -14,7 +14,7 @@ class MigrateCommand extends Command {
   void execute(List<String> arguments) async {
     print('\x1B[32m Migration started \x1B[0m');
     Process process = await Process.start('dart',
-        ['run','\\lib\\database\\migrations\\migrate.dart']);
+        ['run','${Directory.current.path}\\lib\\database\\migrations\\migrate.dart']);
 
     await for (var data in process.stdout.transform(utf8.decoder)) {
       List lines = data.split("\n");

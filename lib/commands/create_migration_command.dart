@@ -63,7 +63,7 @@ class CreateMigrationCommand extends Command {
     String migrationName = arguments[0];
 
     String filePath =
-        'lib\\database\\migrations\\${pascalToSnake(migrationName)}.dart';
+        '${Directory.current.path}\\lib\\database\\migrations\\${pascalToSnake(migrationName)}.dart';
     File newFile = File(filePath);
 
     if (newFile.existsSync()) {
@@ -82,7 +82,7 @@ class CreateMigrationCommand extends Command {
     newFile.writeAsString(str);
 
     File migrate = File(
-        'lib\\database\\migrations\\migrate.dart');
+        '${Directory.current.path}\\lib\\database\\migrations\\migrate.dart');
 
     if (!migrate.existsSync()) {
       migrate.createSync(recursive: true);
