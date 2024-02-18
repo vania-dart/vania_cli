@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:vania_cli/commands/command.dart';
 import 'package:vania_cli/utils/functions.dart';
 
-
-
 String controllerStubs = '''
 import 'package:vania/vania.dart';
 
@@ -89,8 +87,8 @@ class CreateControllerCommand extends Command {
 
     newFile.createSync(recursive: true);
 
-
-    String str = controllerStubs.replaceFirst('controllerName', snakeToPascal(controllerName));
+    String str = controllerStubs.replaceFirst(
+        'controllerName', snakeToPascal(controllerName));
 
     newFile.writeAsString(str);
 

@@ -3,6 +3,8 @@ description: A Command-Line Interface for Vania dart web application to create n
 version: 0.0.1+1-alpha
 repository: https://github.com/vania-dart/vania_cli
 homepage: https://vdart.dev
+documentation: https://vdart.dev/docs/intro
+topics: [server, backend, httpserver, framework, web]
 
 
 environment:

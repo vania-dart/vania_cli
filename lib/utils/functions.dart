@@ -9,7 +9,6 @@ String snakeToPascal(String name) {
       .join('');
 }
 
-
 String pascalToSnake(String input) {
   if (input.isEmpty) return '';
   StringBuffer result = StringBuffer();

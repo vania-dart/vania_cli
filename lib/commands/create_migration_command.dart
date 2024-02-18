@@ -45,7 +45,6 @@ class CreateMigrationCommand extends Command {
 
   @override
   void execute(List<String> arguments) {
-    
     if (arguments.isEmpty) {
       print('  What should the migration be named?');
       stdout.write('\x1B[1m > \x1B[0m');

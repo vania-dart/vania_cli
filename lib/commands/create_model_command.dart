@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:vania_cli/commands/command.dart';
 import 'package:vania_cli/utils/functions.dart';
 
-
-
 String modelStub = '''
 import 'package:vania/vania.dart';
 
@@ -16,7 +14,6 @@ class ModelName extends Model{
 
 }
 ''';
-
 
 class CreateModelCommand extends Command {
   @override
@@ -33,7 +30,7 @@ class CreateModelCommand extends Command {
       arguments.add(stdin.readLineSync()!);
     }
 
-    if(arguments.length < 2){
+    if (arguments.length < 2) {
       print('  What should the table be named?');
       stdout.write('\x1B[1m > c');
       arguments.add(stdin.readLineSync()!);

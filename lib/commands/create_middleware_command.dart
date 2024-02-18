@@ -50,8 +50,8 @@ class CreateMiddlewareCommand extends Command {
 
     newFile.createSync(recursive: true);
 
-    String str = middlewareStub
-        .replaceFirst('MiddlewareName', snakeToPascal(middlewareName));
+    String str = middlewareStub.replaceFirst(
+        'MiddlewareName', snakeToPascal(middlewareName));
 
     newFile.writeAsString(str);
 
