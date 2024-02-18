@@ -20,19 +20,19 @@ class NewProject extends Command {
 
     String projectName = pascalToSnake(arguments[0]);
 
-    final projectFolder = Directory('${Directory.current.path}\\$projectName');
+    final projectFolder = Directory('${Directory.current.path}/$projectName');
 
     if (projectFolder.existsSync()) {
       print('\x1B[41m\x1B[37m ERROR \x1B[0m "$projectName" already exist');
       return;
     }
 
-    print(' Creating a "Vania/Dart" project at ".\\$projectName"');
+    print(' Creating a "Vania/Dart" project at "./$projectName"');
 
     Process.runSync('git',
         ['clone', 'https://github.com/vania-dart/sample.git', projectName]);
 
-    Directory gitDirectory = Directory('${projectFolder.path}\\.git');
+    Directory gitDirectory = Directory('${projectFolder.path}/.git');
     if (gitDirectory.existsSync()) {
       gitDirectory.deleteSync(recursive: true);
     }
@@ -48,7 +48,7 @@ class NewProject extends Command {
       }
     }
 
-    File configFile = File('${projectFolder.path}\\lib\\config\\app.dart');
+    File configFile = File('${projectFolder.path}/lib/config/app.dart');
 
     if (configFile.existsSync()) {
       configFile.writeAsStringSync(configFile

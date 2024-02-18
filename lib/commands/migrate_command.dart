@@ -15,7 +15,7 @@ class MigrateCommand extends Command {
     print('\x1B[32m Migration started \x1B[0m');
     Process process = await Process.start('dart', [
       'run',
-      '${Directory.current.path}\\lib\\database\\migrations\\migrate.dart'
+      '${Directory.current.path}/lib/database/migrations/migrate.dart'
     ]);
 
     await for (var data in process.stdout.transform(utf8.decoder)) {

@@ -39,6 +39,9 @@ class controllerName extends Controller {
      }
 
 }
+
+final controllerName ${firstLetterLowerCase('controllerName')} = controllerName();
+
 ''';
 
 class CreateControllerCommand extends Command {
@@ -64,7 +67,7 @@ class CreateControllerCommand extends Command {
       return;
     }
 
-    List fileName = arguments[0].split(RegExp(r'[/\\]'));
+    List fileName = arguments[0].split(RegExp(r'[/]'));
 
     String controllerName = fileName[fileName.length - 1];
 
@@ -72,12 +75,12 @@ class CreateControllerCommand extends Command {
 
     if (fileName.length > 1) {
       fileName.remove(fileName[fileName.length - 1]);
-      secondPath = fileName.join("\\");
-      secondPath = secondPath.endsWith("\\") ? secondPath : "$secondPath\\";
+      secondPath = fileName.join("/");
+      secondPath = secondPath.endsWith("/") ? secondPath : "$secondPath/";
     }
 
     String controllerPath =
-        '${Directory.current.path}\\lib\\app\\http\\controller\\$secondPath${pascalToSnake(controllerName)}.dart';
+        '${Directory.current.path}/lib/app/http/controller/$secondPath${pascalToSnake(controllerName)}.dart';
     File newFile = File(controllerPath);
 
     if (newFile.existsSync()) {
