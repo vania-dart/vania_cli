@@ -11,7 +11,7 @@ class MigrationName extends Migration {
   @override
   Future<void> up() async{
     super.up();
-   await createTable('TableName', () {
+   await createTableNotExists('TableName', () {
       id();
     });
   }
@@ -76,7 +76,7 @@ class CreateMigrationCommand extends Command {
         migrationName.replaceAll('create_', '').replaceAll('_table', '');
     String str = migrationStub
         .replaceFirst('MigrationName', snakeToPascal(migrationName))
-        .replaceFirst('TableName', snakeToPascal(tableName));
+        .replaceFirst('TableName', tableName);
 
     newFile.writeAsString(str);
 

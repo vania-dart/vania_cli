@@ -80,7 +80,7 @@ class CreateControllerCommand extends Command {
     }
 
     String controllerPath =
-        '${Directory.current.path}/lib/app/http/controller/$secondPath${pascalToSnake(controllerName)}.dart';
+        '${Directory.current.path}/lib/app/http/controllers/$secondPath${pascalToSnake(controllerName)}.dart';
     File newFile = File(controllerPath);
 
     if (newFile.existsSync()) {
