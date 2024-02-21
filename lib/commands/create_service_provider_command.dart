@@ -37,7 +37,7 @@ class CreateSrviceProviderCommand extends Command {
     if (!alphaRegex.hasMatch(arguments[0])) {
       print(
           ' \x1B[41m\x1B[37m ERROR \x1B[0m Service Provider must contain only letters a-z and optional _');
-      return;
+      exit(0);
     }
 
     String providerName = arguments[0];
@@ -48,7 +48,7 @@ class CreateSrviceProviderCommand extends Command {
 
     if (newFile.existsSync()) {
       print(' \x1B[41m\x1B[37m ERROR \x1B[0m Service Provider already exists.');
-      return;
+      exit(0);
     }
 
     newFile.createSync(recursive: true);

@@ -34,7 +34,7 @@ class CreateMiddlewareCommand extends Command {
     if (!alphaRegex.hasMatch(arguments[0])) {
       print(
           ' \x1B[41m\x1B[37m ERROR \x1B[0m Middleware must contain only letters a-z and optional _');
-      return;
+      exit(0);
     }
 
     String middlewareName = arguments[0];
@@ -45,7 +45,7 @@ class CreateMiddlewareCommand extends Command {
 
     if (newFile.existsSync()) {
       print(' \x1B[41m\x1B[37m ERROR \x1B[0m Middleware already exists.');
-      return;
+     exit(0);
     }
 
     newFile.createSync(recursive: true);

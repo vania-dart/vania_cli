@@ -15,6 +15,7 @@ class ModelName extends Model{
 }
 ''';
 
+
 class CreateModelCommand extends Command {
   @override
   String get name => 'make:model';
@@ -33,9 +34,7 @@ class CreateModelCommand extends Command {
     if (arguments.length < 2) {
       print('  What should the table be named?');
       stdout.write('\x1B[1m > ');
-      if (stdin.readLineSync()!.isNotEmpty) {
-        arguments.add(stdin.readLineSync()!);
-      }
+      arguments.add(stdin.readLineSync()!);
     }
 
     if (arguments.length < 2) {
@@ -48,7 +47,7 @@ class CreateModelCommand extends Command {
     if (!alphaRegex.hasMatch(arguments[0])) {
       print(
           ' \x1B[41m\x1B[37m ERROR \x1B[0m Model must contain only letters a-z and optional _');
-      return;
+      exit(0);
     }
 
     String modelName = arguments[0];
@@ -59,7 +58,7 @@ class CreateModelCommand extends Command {
 
     if (newFile.existsSync()) {
       print(' \x1B[41m\x1B[37m ERROR \x1B[0m Model already exists.');
-      return;
+      exit(0);
     }
 
     newFile.createSync(recursive: true);

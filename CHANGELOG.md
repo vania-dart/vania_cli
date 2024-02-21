@@ -1,14 +1,16 @@
+## 0.0.3+2
+
+- Fixed create model
+
 ## 0.0.3+1
 
 - Fixed create new project
-
 
 ## 0.0.3
 
 - Adding create service provider
 - Get vania version from api
 - Adding run command from vania project
-
 
 ## 0.0.2+1
 
@@ -17,7 +19,7 @@
   
 - ## 0.0.2
 
-- Fixed path 
+- Fixed path
 
 ## 0.0.1+1-alpha
 

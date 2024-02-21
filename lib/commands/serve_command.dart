@@ -20,7 +20,7 @@ class ServeCommand extends Command {
 
     watcher.events.listen((event) async {
       if (path.extension(event.path) != '.dart') {
-        return;
+       exit(0);
       }
 
       print("\x1B[32m File changed: ${path.basename(event.path)} \x1B[0m");

@@ -64,7 +64,7 @@ class CreateControllerCommand extends Command {
     if (!alphaRegex.hasMatch(arguments[0])) {
       print(
           ' \x1B[41m\x1B[37m ERROR \x1B[0m Controller must contain only letters a-z and optional _');
-      return;
+     exit(0);
     }
 
     List fileName = arguments[0].split(RegExp(r'[/]'));
@@ -85,7 +85,7 @@ class CreateControllerCommand extends Command {
 
     if (newFile.existsSync()) {
       print(' \x1B[41m\x1B[37m ERROR \x1B[0m Controller already exists.');
-      return;
+      exit(0);
     }
 
     newFile.createSync(recursive: true);

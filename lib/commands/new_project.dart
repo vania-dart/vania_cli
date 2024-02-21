@@ -24,7 +24,7 @@ class NewProject extends Command {
 
     if (projectFolder.existsSync()) {
       print('\x1B[41m\x1B[37m ERROR \x1B[0m "$projectName" already exist');
-      return;
+      exit(0);
     }
 
     print(' Creating a "Vania/Dart" project at "./$projectName"');
