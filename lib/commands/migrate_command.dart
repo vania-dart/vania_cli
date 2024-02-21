@@ -26,6 +26,6 @@ class MigrateCommand extends Command {
         }
       }
     }
-    print('\n\n \x1B[42m SUCCESS \x1B[0m All done.\n\n');
+    
   }
 }

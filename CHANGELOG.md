@@ -1,3 +1,10 @@
+## 0.0.3
+
+- Adding create service provider
+- Get vania version from api
+- Adding run command from vania project
+
+
 ## 0.0.2+1
 
 - fixing new controller path

@@ -1,12 +1,17 @@
+import 'dart:io';
+
 import 'package:vania_cli/commands/build_command.dart';
 import 'package:vania_cli/commands/command.dart';
 import 'package:vania_cli/commands/create_controller_command.dart';
 import 'package:vania_cli/commands/create_middleware_command.dart';
 import 'package:vania_cli/commands/create_migration_command.dart';
+import 'package:vania_cli/commands/create_model_command.dart';
+import 'package:vania_cli/commands/create_service_provider_command.dart';
 import 'package:vania_cli/commands/migrate_command.dart';
 import 'package:vania_cli/commands/new_project.dart';
 import 'package:vania_cli/commands/serve_command.dart';
 import 'package:vania_cli/commands/update_command.dart';
+import 'package:vania_cli/service/service.dart';
 
 class CommandRunner {
   final Map<String, Command> _commands = {
@@ -17,10 +22,18 @@ class CommandRunner {
     'make:controller': CreateControllerCommand(),
     'make:middleware': CreateMiddlewareCommand(),
     'make:migration': CreateMigrationCommand(),
+    'make:model': CreateModelCommand(),
+    'make:service_provider': CreateSrviceProviderCommand(),
     'migrate': MigrateCommand(),
   };
 
-  void run(List<String> arguments) {
+  void run(List<String> arguments) async {
+    if (!Directory('${Directory.current.path}/lib').existsSync()) {
+      print(
+          ' \x1B[41m\x1B[37m ERROR \x1B[0m Please run this command from the root directory of the Vania project');
+      exit(0);
+    }
+
     if (arguments.isEmpty) {
       print(
           '\x1B[32m -V, --version  \x1B[0m\t\t Display this application version');
@@ -35,7 +48,8 @@ class CommandRunner {
     if (commandName == '-V' ||
         commandName == '--version' ||
         commandName == '--v') {
-      print(' \x1B[1mVania Dart Framework Alpha \x1B[32m 0.0.1  \x1B[0m');
+      String version = await Service().fetchVaniaVersion();
+      print(' \x1B[1mVania Dart Framework \x1B[32m $version  \x1B[0m');
       return;
     }
 
@@ -48,6 +62,7 @@ class CommandRunner {
     }
 
     final commandArguments = arguments.sublist(1);
+
     command.execute(commandArguments);
   }
 }

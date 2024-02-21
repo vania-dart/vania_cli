@@ -32,8 +32,15 @@ class CreateModelCommand extends Command {
 
     if (arguments.length < 2) {
       print('  What should the table be named?');
-      stdout.write('\x1B[1m > c');
-      arguments.add(stdin.readLineSync()!);
+      stdout.write('\x1B[1m > ');
+      if (stdin.readLineSync()!.isNotEmpty) {
+        arguments.add(stdin.readLineSync()!);
+      }
+    }
+
+    if (arguments.length < 2) {
+      print(' \x1B[41m\x1B[37m ERROR \x1B[0m Table is required');
+      exit(0);
     }
 
     RegExp alphaRegex = RegExp(r'^[a-zA-Z]+(?:[_][a-zA-Z]+)*$');
