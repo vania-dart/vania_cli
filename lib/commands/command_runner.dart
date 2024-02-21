@@ -28,11 +28,7 @@ class CommandRunner {
   };
 
   void run(List<String> arguments) async {
-    if (!Directory('${Directory.current.path}/lib').existsSync()) {
-      print(
-          ' \x1B[41m\x1B[37m ERROR \x1B[0m Please run this command from the root directory of the Vania project');
-      exit(0);
-    }
+    
 
     if (arguments.isEmpty) {
       print(
@@ -54,6 +50,12 @@ class CommandRunner {
     }
 
     final command = _commands[commandName];
+
+    if (!Directory('${Directory.current.path}/lib').existsSync() && commandName != 'new') {
+      print(
+          ' \x1B[41m\x1B[37m ERROR \x1B[0m Please run this command from the root directory of the Vania project');
+      exit(0);
+    }
 
     if (command == null) {
       print(

@@ -1,3 +1,8 @@
+## 0.0.3+1
+
+- Fixed create new project
+
+
 ## 0.0.3
 
 - Adding create service provider
@@ -7,12 +12,12 @@
 
 ## 0.0.2+1
 
-- fixing new controller path
+- Fixed new controller path
 - adding dart pub add vania
   
 - ## 0.0.2
 
-- Fixing path 
+- Fixed path 
 
 ## 0.0.1+1-alpha
 
