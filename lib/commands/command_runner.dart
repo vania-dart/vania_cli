@@ -49,17 +49,17 @@ class CommandRunner {
 
     final command = _commands[commandName];
 
-    if (!Directory('${Directory.current.path}/lib').existsSync() &&
-        commandName != 'new') {
-      print(
-          ' \x1B[41m\x1B[37m ERROR \x1B[0m Please run this command from the root directory of the Vania project');
-      exit(0);
-    }
-
     if (command == null) {
       print(
           ' \x1B[41m\x1B[37m ERROR \x1B[0m Command "$commandName" is not defined.');
       return;
+    }
+
+    if (!Directory('${Directory.current.path}/lib').existsSync() &&
+        !(commandName == 'new' || commandName == 'update')) {
+      print(
+          '\x1B[41m\x1B[37m ERROR \x1B[0m Please run this command from the root directory of the Vania project');
+      exit(0);
     }
 
     final commandArguments = arguments.sublist(1);

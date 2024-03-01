@@ -18,7 +18,7 @@ class ServeCommand extends Command {
     DirectoryWatcher watcher = DirectoryWatcher(Directory.current.path);
     Timer? timer;
     String? vmService;
-    if (arguments.length > 1 && arguments[1] == '--vm') {
+    if (arguments.isNotEmpty && arguments[0] == '--vm') {
       vmService = '--enable-vm-service';
     }
 

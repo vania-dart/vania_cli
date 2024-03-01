@@ -1,3 +1,7 @@
+## 0.0.4+1
+
+- Fixed bug: vm serve
+
 ## 0.0.4
 
 - Updated minimum Dart SDK support to version 3.0.0
