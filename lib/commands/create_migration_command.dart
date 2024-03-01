@@ -80,8 +80,8 @@ class CreateMigrationCommand extends Command {
 
     newFile.writeAsString(str);
 
-    File migrate = File(
-        '${Directory.current.path}/lib/database/migrations/migrate.dart');
+    File migrate =
+        File('${Directory.current.path}/lib/database/migrations/migrate.dart');
 
     if (!migrate.existsSync()) {
       migrate.createSync(recursive: true);

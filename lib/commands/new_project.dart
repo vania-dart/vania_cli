@@ -61,7 +61,7 @@ class NewProject extends Command {
 
     Directory.current = Directory(projectFolder.path);
 
-    Process process = await Process.start('dart', ['pub','add', 'vania']);
+    Process process = await Process.start('dart', ['pub', 'add', 'vania']);
     process.stdout.transform(utf8.decoder).listen((data) {
       List lines = data.split("\n");
       for (String line in lines) {

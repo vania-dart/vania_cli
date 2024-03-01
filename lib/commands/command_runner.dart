@@ -23,13 +23,11 @@ class CommandRunner {
     'make:middleware': CreateMiddlewareCommand(),
     'make:migration': CreateMigrationCommand(),
     'make:model': CreateModelCommand(),
-    'make:service_provider': CreateSrviceProviderCommand(),
+    'make:provider': CreateSrviceProviderCommand(),
     'migrate': MigrateCommand(),
   };
 
   void run(List<String> arguments) async {
-    
-
     if (arguments.isEmpty) {
       print(
           '\x1B[32m -V, --version  \x1B[0m\t\t Display this application version');
@@ -51,7 +49,8 @@ class CommandRunner {
 
     final command = _commands[commandName];
 
-    if (!Directory('${Directory.current.path}/lib').existsSync() && commandName != 'new') {
+    if (!Directory('${Directory.current.path}/lib').existsSync() &&
+        commandName != 'new') {
       print(
           ' \x1B[41m\x1B[37m ERROR \x1B[0m Please run this command from the root directory of the Vania project');
       exit(0);

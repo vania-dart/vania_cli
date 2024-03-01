@@ -45,7 +45,7 @@ class CreateMiddlewareCommand extends Command {
 
     if (newFile.existsSync()) {
       print(' \x1B[41m\x1B[37m ERROR \x1B[0m Middleware already exists.');
-     exit(0);
+      exit(0);
     }
 
     newFile.createSync(recursive: true);

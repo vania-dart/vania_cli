@@ -64,7 +64,7 @@ class CreateControllerCommand extends Command {
     if (!alphaRegex.hasMatch(arguments[0])) {
       print(
           ' \x1B[41m\x1B[37m ERROR \x1B[0m Controller must contain only letters a-z and optional _');
-     exit(0);
+      exit(0);
     }
 
     List fileName = arguments[0].split(RegExp(r'[/]'));
@@ -90,7 +90,7 @@ class CreateControllerCommand extends Command {
 
     newFile.createSync(recursive: true);
 
-    String str = controllerStubs.replaceFirst(
+    String str = controllerStubs.replaceAll(
         'controllerName', snakeToPascal(controllerName));
 
     newFile.writeAsString(str);

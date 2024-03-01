@@ -16,10 +16,9 @@ class ServiceProviderName extends ServiceProvider{
 }
 ''';
 
-
 class CreateSrviceProviderCommand extends Command {
   @override
-  String get name => 'make:service_provider';
+  String get name => 'make:provider';
 
   @override
   String get description => 'Create a new Service Provider class';
@@ -53,8 +52,8 @@ class CreateSrviceProviderCommand extends Command {
 
     newFile.createSync(recursive: true);
 
-    String str = serviceProviderStub
-        .replaceAll('ServiceProviderName', snakeToPascal(providerName));
+    String str = serviceProviderStub.replaceAll(
+        'ServiceProviderName', snakeToPascal(providerName));
 
     newFile.writeAsString(str);
 

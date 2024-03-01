@@ -10,17 +10,23 @@ class ServeCommand extends Command {
   String get name => 'serve';
 
   @override
-  String get description => 'Serve the application';
+  String get description =>
+      'Serve the application. To enable VM service, add the `--vm` flag.';
 
   @override
   void execute(List<String> arguments) async {
     DirectoryWatcher watcher = DirectoryWatcher(Directory.current.path);
     Timer? timer;
-    Process? process = await _serve();
+    String? vmService;
+    if (arguments.length > 1 && arguments[1] == '--vm') {
+      vmService = '--enable-vm-service';
+    }
+
+    Process? process = await _serve(vmService);
 
     watcher.events.listen((event) async {
       if (path.extension(event.path) != '.dart') {
-       exit(0);
+        exit(0);
       }
 
       print("\x1B[32m File changed: ${path.basename(event.path)} \x1B[0m");
@@ -33,7 +39,7 @@ class ServeCommand extends Command {
         process?.kill();
         int? exitCode = await process?.exitCode;
         if (exitCode.toString().isNotEmpty) {
-          process = await _serve();
+          process = await _serve(vmService);
         }
       });
     });
@@ -50,9 +56,14 @@ class ServeCommand extends Command {
     });
   }
 
-  Future<Process> _serve() async {
-    Process process =
-        await Process.start('dart', ['--enable-vm-service', 'bin/server.dart']);
+  Future<Process> _serve(String? vm) async {
+    Process process;
+    if (vm == null) {
+      process = await Process.start('dart', ['bin/server.dart']);
+    } else {
+      process = await Process.start('dart', [vm, 'bin/server.dart']);
+    }
+
     process.stdout.transform(utf8.decoder).listen((data) {
       List lines = data.split("\n");
       for (String line in lines) {

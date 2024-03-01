@@ -15,7 +15,6 @@ class ModelName extends Model{
 }
 ''';
 
-
 class CreateModelCommand extends Command {
   @override
   String get name => 'make:model';

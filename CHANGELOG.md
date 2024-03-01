@@ -1,3 +1,10 @@
+## 0.0.4
+
+- Updated minimum Dart SDK support to version 3.0.0
+- Added support for enabling VM service
+- Renamed `make:service_provider` command to `make:provider`
+- Fixed bug related to controller naming
+
 ## 0.0.3+2
 
 - Fixed create model
