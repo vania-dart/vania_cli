@@ -18,31 +18,30 @@ class ServeCommand extends Command {
     DirectoryWatcher watcher = DirectoryWatcher(Directory.current.path);
     Timer? timer;
     String? vmService;
-    if (arguments.isNotEmpty && arguments[0] == '--vm') {
+    if (arguments.isNotEmpty && arguments[0].toLowerCase() == '--vm') {
       vmService = '--enable-vm-service';
     }
 
     Process? process = await _serve(vmService);
 
     watcher.events.listen((event) async {
-      if (path.extension(event.path) != '.dart') {
-        exit(0);
-      }
-
-      print("\x1B[32m File changed: ${path.basename(event.path)} \x1B[0m");
-      print("Restarting the server....");
-      if (timer != null) {
-        timer?.cancel();
-      }
-
-      timer = Timer(Duration(milliseconds: 500), () async {
-        process?.kill();
-        int? exitCode = await process?.exitCode;
-        if (exitCode.toString().isNotEmpty) {
-          process = await _serve(vmService);
+      if (path.extension(event.path) == '.dart') {
+        print("\x1B[32m File changed: ${path.basename(event.path)} \x1B[0m");
+        print("Restarting the server....");
+        if (timer != null) {
+          timer?.cancel();
         }
-      });
+
+        timer = Timer(Duration(milliseconds: 500), () async {
+          process?.kill();
+          int? exitCode = await process?.exitCode;
+          if (exitCode.toString().isNotEmpty) {
+            process = await _serve(vmService);
+          }
+        });
+      }
     });
+
     ProcessSignal.sigint.watch().listen((signal) {
       print('Stopping the server...');
       Timer(Duration(seconds: 1), () {

@@ -1,3 +1,8 @@
+## 0.0.4+2
+
+- Fixed bug: exit process when upload file
+- Added toLowerCase for vm flag
+
 ## 0.0.4+1
 
 - Fixed bug: vm serve
