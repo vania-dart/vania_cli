@@ -27,7 +27,6 @@ String generateRandomKey() {
   return base64Url.encode(keyBytes);
 }
 
-String firstLetterLowerCase(String input) {
-  String pascalString = snakeToPascal(input);
-  return '${pascalString[0].toLowerCase()}${pascalString.substring(1)}';
+String firstLetterLowerCase(String str) {
+  return '${str[0].toLowerCase()}${str.substring(1)}';
 }

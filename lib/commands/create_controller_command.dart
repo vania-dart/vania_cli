@@ -40,7 +40,7 @@ class controllerName extends Controller {
 
 }
 
-final controllerName ${firstLetterLowerCase('controllerName')} = controllerName();
+final controllerName varName = controllerName();
 
 ''';
 
@@ -90,8 +90,9 @@ class CreateControllerCommand extends Command {
 
     newFile.createSync(recursive: true);
 
-    String str = controllerStubs.replaceAll(
-        'controllerName', snakeToPascal(controllerName));
+    String str = controllerStubs
+        .replaceAll('controllerName', snakeToPascal(controllerName))
+        .replaceFirst('varName', firstLetterLowerCase(controllerName));
 
     newFile.writeAsString(str);
 
