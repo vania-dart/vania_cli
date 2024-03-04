@@ -16,7 +16,7 @@ import 'package:vania_cli/service/service.dart';
 class CommandRunner {
   final Map<String, Command> _commands = {
     'serve': ServeCommand(),
-    'new': NewProject(),
+    'create': NewProject(),
     'build': BuildCommand(),
     'update': UpdateCommand(),
     'make:controller': CreateControllerCommand(),
@@ -47,7 +47,7 @@ class CommandRunner {
       return;
     }
 
-    final command = _commands[commandName];
+    final command = _commands[commandName.toString().toLowerCase()];
 
     if (command == null) {
       print(

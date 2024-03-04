@@ -5,7 +5,7 @@ import 'package:vania_cli/utils/functions.dart';
 
 class NewProject extends Command {
   @override
-  String get name => 'new';
+  String get name => 'create';
 
   @override
   String get description => 'Create a new Vania project';
@@ -70,8 +70,16 @@ class NewProject extends Command {
         }
       }
     }).onDone(() {
-      print(
-          '\n\n  \x1B[42m SUCCESS \x1B[0m Application ready in [$projectName]. Build something amazing.\n\n');
+
+      print('\n\n\x1B[42m SUCCESS \x1B[0m All done! Build something amazing');
+      print('You can find general documentation for Vania at: https://vdart.dev/docs/intro/\n\n');
+
+      print('In order to run your application, type:\n');
+      print(r' $ cd '+projectName);
+      print(r' $ Vania serve');
+      print('\nYour configuration file is in $projectName\\lib\\config\\app.dart');
+      print('Your Api route file is in $projectName\\lib\\route\\api_route.dart\n');
+
     });
   }
 }

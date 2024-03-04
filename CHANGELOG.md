@@ -1,3 +1,8 @@
+## 0.0.4+3
+
+- Changing Vania new to the Vania create to create the project
+- Added hint-text when project created
+
 ## 0.0.4+2
 
 - Fixed bug: exit process when upload file
