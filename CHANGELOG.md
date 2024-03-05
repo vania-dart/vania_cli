@@ -1,3 +1,7 @@
+## 0.0.4+4
+
+- Hotfix On creting new project
+
 ## 0.0.4+3
 
 - Changing Vania new to the Vania create to create the project

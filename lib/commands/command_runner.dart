@@ -37,7 +37,7 @@ class CommandRunner {
       return;
     }
 
-    final commandName = arguments[0];
+    final commandName = arguments[0].toString().toLowerCase();
 
     if (commandName == '-V' ||
         commandName == '--version' ||
@@ -47,7 +47,7 @@ class CommandRunner {
       return;
     }
 
-    final command = _commands[commandName.toString().toLowerCase()];
+    final command = _commands[commandName];
 
     if (command == null) {
       print(
@@ -56,7 +56,7 @@ class CommandRunner {
     }
 
     if (!Directory('${Directory.current.path}/lib').existsSync() &&
-        !(commandName == 'new' || commandName == 'update')) {
+        !(commandName == 'create' || commandName == 'update')) {
       print(
           '\x1B[41m\x1B[37m ERROR \x1B[0m Please run this command from the root directory of the Vania project');
       exit(0);
