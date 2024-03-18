@@ -1,5 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
+import 'package:path/path.dart' as path;
+import 'package:vania_cli/common/constants.dart';
 
 String snakeToPascal(String name) {
   return name
@@ -29,4 +33,51 @@ String generateRandomKey() {
 
 String firstLetterLowerCase(String str) {
   return '${str[0].toLowerCase()}${str.substring(1)}';
+}
+
+Future<void> updateDartToolVaniaConfig(Map<String, dynamic> config) async {
+  try{
+    final configFile = await getDartToolVaniaConfigFile();
+    if(configFile != null){
+      await configFile.writeAsString(jsonEncode(config));
+    }
+  }catch(_){}
+}
+
+FutureOr<File?> getDartToolVaniaConfigFile() async {
+
+  try{
+    final Directory dartToolDir = Directory('${Directory.current.path}/.dart_tool');
+    if(dartToolDir.existsSync()){
+      final configFile = File(path.join(dartToolDir.path, Constants.vaniaConfigFile));
+      if(configFile.existsSync()) {
+        return configFile;
+      }else{
+        await configFile.create(recursive: true);
+        return configFile;
+      }
+    }
+  }catch(_){}
+
+  return null;
+}
+
+Future<Map<String, dynamic>?> getDartToolVaniaConfig() async {
+
+  final configFile = await getDartToolVaniaConfigFile();
+  if(configFile != null){
+
+    String base = configFile.readAsStringSync();
+    try{
+      if(base == ''){
+        Map<String, dynamic> config = {'lastRun': DateTime.now().toString()};
+        configFile.writeAsString(jsonEncode(config));
+        return config;
+      }
+      return jsonDecode(base);
+    }catch(_){
+    }
+
+  }
+  return null;
 }
