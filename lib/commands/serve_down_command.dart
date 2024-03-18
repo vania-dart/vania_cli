@@ -1,11 +1,10 @@
-
 import 'dart:async';
 import 'dart:io';
 
 import 'package:vania_cli/commands/command.dart';
 import 'package:vania_cli/utils/functions.dart';
 
-class ServeDownCommand implements Command{
+class ServeDownCommand implements Command {
   @override
   String get description => 'To down the running application.';
 
@@ -20,15 +19,14 @@ class ServeDownCommand implements Command{
         return;
       }
       dynamic pid = dartToolVania['process']?['pid'];
-      if(pid is String){
+      if (pid is String) {
         pid = int.tryParse(pid);
       }
 
-      if(pid != null){
+      if (pid != null) {
         print('Stopping the server...');
 
         timer = Timer(Duration(milliseconds: 500), () async {
-
           if (timer != null) {
             timer?.cancel();
           }
@@ -41,8 +39,5 @@ class ServeDownCommand implements Command{
         });
       }
     });
-
-
   }
-
 }

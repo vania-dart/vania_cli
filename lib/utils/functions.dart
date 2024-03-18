@@ -36,48 +36,45 @@ String firstLetterLowerCase(String str) {
 }
 
 Future<void> updateDartToolVaniaConfig(Map<String, dynamic> config) async {
-  try{
+  try {
     final configFile = await getDartToolVaniaConfigFile();
-    if(configFile != null){
+    if (configFile != null) {
       await configFile.writeAsString(jsonEncode(config));
     }
-  }catch(_){}
+  } catch (_) {}
 }
 
 FutureOr<File?> getDartToolVaniaConfigFile() async {
-
-  try{
-    final Directory dartToolDir = Directory('${Directory.current.path}/.dart_tool');
-    if(dartToolDir.existsSync()){
-      final configFile = File(path.join(dartToolDir.path, Constants.vaniaConfigFile));
-      if(configFile.existsSync()) {
+  try {
+    final Directory dartToolDir =
+        Directory('${Directory.current.path}/.dart_tool');
+    if (dartToolDir.existsSync()) {
+      final configFile =
+          File(path.join(dartToolDir.path, Constants.vaniaConfigFile));
+      if (configFile.existsSync()) {
         return configFile;
-      }else{
+      } else {
         await configFile.create(recursive: true);
         return configFile;
       }
     }
-  }catch(_){}
+  } catch (_) {}
 
   return null;
 }
 
 Future<Map<String, dynamic>?> getDartToolVaniaConfig() async {
-
   final configFile = await getDartToolVaniaConfigFile();
-  if(configFile != null){
-
+  if (configFile != null) {
     String base = configFile.readAsStringSync();
-    try{
-      if(base == ''){
+    try {
+      if (base == '') {
         Map<String, dynamic> config = {'lastRun': DateTime.now().toString()};
         configFile.writeAsString(jsonEncode(config));
         return config;
       }
       return jsonDecode(base);
-    }catch(_){
-    }
-
+    } catch (_) {}
   }
   return null;
 }
