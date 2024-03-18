@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:path/path.dart' as path;
+import 'package:vania_cli/utils/functions.dart';
 import 'package:watcher/watcher.dart';
 import 'package:vania_cli/commands/command.dart';
 
@@ -24,6 +25,10 @@ class ServeCommand extends Command {
 
     Process? process = await _serve(vmService);
 
+    /// save process info on `.dartTool` folder for upcoming serve features
+    /// like down, up, etc
+    _updateDartToolVaniaConfig(process);
+
     watcher.events.listen((event) async {
       if (path.extension(event.path) == '.dart') {
         print("\x1B[32m File changed: ${path.basename(event.path)} \x1B[0m");
@@ -44,7 +49,7 @@ class ServeCommand extends Command {
 
     ProcessSignal.sigint.watch().listen((signal) {
       print('Stopping the server...');
-      Timer(Duration(seconds: 1), () {
+      Timer(Duration(milliseconds: 600), () {
         if (timer != null) {
           timer?.cancel();
         }
@@ -83,4 +88,14 @@ class ServeCommand extends Command {
 
     return process;
   }
+
+  void _updateDartToolVaniaConfig(Process? process) =>
+      getDartToolVaniaConfig().then((dartToolVania) {
+        if (dartToolVania == null) {
+          return;
+        }
+        dartToolVania['process'] = {'pid': process?.pid};
+
+        updateDartToolVaniaConfig(dartToolVania);
+      });
 }

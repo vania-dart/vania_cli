@@ -10,6 +10,7 @@ import 'package:vania_cli/commands/create_service_provider_command.dart';
 import 'package:vania_cli/commands/migrate_command.dart';
 import 'package:vania_cli/commands/new_project.dart';
 import 'package:vania_cli/commands/serve_command.dart';
+import 'package:vania_cli/commands/serve_down_command.dart';
 import 'package:vania_cli/commands/update_command.dart';
 import 'package:vania_cli/service/service.dart';
 
@@ -17,6 +18,7 @@ class CommandRunner {
   final Map<String, Command> _commands = {
     'serve': ServeCommand(),
     'create': NewProject(),
+    'down': ServeDownCommand(),
     'build': BuildCommand(),
     'update': UpdateCommand(),
     'make:controller': CreateControllerCommand(),
