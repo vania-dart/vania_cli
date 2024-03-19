@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:vania_cli/commands/command.dart';
 import 'package:vania_cli/utils/functions.dart';
+import 'command.dart';
 
 String serviceProviderStub = '''
 import 'package:vania/vania.dart';
@@ -16,7 +16,7 @@ class ServiceProviderName extends ServiceProvider{
 }
 ''';
 
-class CreateSrviceProviderCommand extends Command {
+class CreateSrviceProviderCommand implements Command {
   @override
   String get name => 'make:provider';
 

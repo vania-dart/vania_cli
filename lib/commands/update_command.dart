@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:vania_cli/commands/command.dart';
+import 'command.dart';
 
-class UpdateCommand extends Command {
+class UpdateCommand implements Command {
   @override
   String get name => 'update';
 

@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:vania_cli/commands/command.dart';
+import 'command.dart';
 
-class MigrateCommand extends Command {
+class MigrateCommand implements Command {
   @override
   String get name => 'migrate';
 

@@ -1,18 +1,19 @@
 import 'dart:io';
 
-import 'package:vania_cli/commands/build_command.dart';
-import 'package:vania_cli/commands/command.dart';
-import 'package:vania_cli/commands/create_controller_command.dart';
-import 'package:vania_cli/commands/create_middleware_command.dart';
-import 'package:vania_cli/commands/create_migration_command.dart';
-import 'package:vania_cli/commands/create_model_command.dart';
-import 'package:vania_cli/commands/create_service_provider_command.dart';
-import 'package:vania_cli/commands/migrate_command.dart';
-import 'package:vania_cli/commands/new_project.dart';
-import 'package:vania_cli/commands/serve_command.dart';
-import 'package:vania_cli/commands/serve_down_command.dart';
-import 'package:vania_cli/commands/update_command.dart';
-import 'package:vania_cli/service/service.dart';
+import '../service/service.dart';
+import 'build_command.dart';
+import 'command.dart';
+import 'create_controller_command.dart';
+import 'create_middleware_command.dart';
+import 'create_migration_command.dart';
+import 'create_model_command.dart';
+import 'create_service_provider_command.dart';
+import 'migrate_command.dart';
+import 'new_project.dart';
+import 'serve_command.dart';
+import 'serve_down_command.dart';
+import 'update_command.dart';
+import 'creeate_mail_command.dart';
 
 class CommandRunner {
   final Map<String, Command> _commands = {
@@ -25,6 +26,7 @@ class CommandRunner {
     'make:middleware': CreateMiddlewareCommand(),
     'make:migration': CreateMigrationCommand(),
     'make:model': CreateModelCommand(),
+    'make:mail': CreateMailCommand(),
     'make:provider': CreateSrviceProviderCommand(),
     'migrate': MigrateCommand(),
   };

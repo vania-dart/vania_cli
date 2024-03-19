@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:vania_cli/commands/command.dart';
 import 'package:vania_cli/utils/functions.dart';
+import 'command.dart';
 
 String migrationStub = '''
 import 'package:vania/vania.dart';
@@ -36,7 +36,7 @@ class Migrate {
 }
 ''';
 
-class CreateMigrationCommand extends Command {
+class CreateMigrationCommand implements Command {
   @override
   String get name => 'make:migration';
 

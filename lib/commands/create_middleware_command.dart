@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:vania_cli/commands/command.dart';
 import 'package:vania_cli/utils/functions.dart';
+import 'command.dart';
 
 String middlewareStub = '''
 import 'package:vania/vania.dart';
@@ -14,7 +14,7 @@ class MiddlewareName extends Middleware {
 }
 ''';
 
-class CreateMiddlewareCommand extends Command {
+class CreateMiddlewareCommand implements Command {
   @override
   String get name => 'make:middleware';
 

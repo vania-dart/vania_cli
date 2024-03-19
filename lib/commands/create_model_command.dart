@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:vania_cli/commands/command.dart';
 import 'package:vania_cli/utils/functions.dart';
+import 'command.dart';
 
 String modelStub = '''
 import 'package:vania/vania.dart';
@@ -15,7 +15,7 @@ class ModelName extends Model{
 }
 ''';
 
-class CreateModelCommand extends Command {
+class CreateModelCommand implements Command {
   @override
   String get name => 'make:model';
 

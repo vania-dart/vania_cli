@@ -1,7 +1,8 @@
 import 'dart:io';
 
-import 'package:vania_cli/commands/command.dart';
 import 'package:vania_cli/utils/functions.dart';
+
+import 'command.dart';
 
 String controllerStubs = '''
 import 'package:vania/vania.dart';
@@ -44,7 +45,7 @@ final controllerName varName = controllerName();
 
 ''';
 
-class CreateControllerCommand extends Command {
+class CreateControllerCommand implements Command {
   @override
   String get name => 'make:controller';
 

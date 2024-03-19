@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:vania_cli/commands/command.dart';
 import 'package:vania_cli/utils/functions.dart';
+import 'command.dart';
 
-class NewProject extends Command {
+class NewProject implements Command {
   @override
   String get name => 'create';
 

@@ -1,3 +1,8 @@
+## 0.0.6
+
+- Added make mail command
+- Fixed import path
+  
 ## 0.0.5
 
 - Added serve down by [babakcode](https://github.com/babakcode)

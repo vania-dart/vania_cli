@@ -4,9 +4,9 @@ import 'dart:io';
 import 'package:path/path.dart' as path;
 import 'package:vania_cli/utils/functions.dart';
 import 'package:watcher/watcher.dart';
-import 'package:vania_cli/commands/command.dart';
+import 'command.dart';
 
-class ServeCommand extends Command {
+class ServeCommand implements Command {
   @override
   String get name => 'serve';
 
@@ -37,7 +37,7 @@ class ServeCommand extends Command {
           timer?.cancel();
         }
 
-        timer = Timer(Duration(milliseconds: 500), () async {
+        timer = Timer(Duration(milliseconds: 300), () async {
           process?.kill();
           int? exitCode = await process?.exitCode;
           if (exitCode.toString().isNotEmpty) {
@@ -49,7 +49,7 @@ class ServeCommand extends Command {
 
     ProcessSignal.sigint.watch().listen((signal) {
       print('Stopping the server...');
-      Timer(Duration(milliseconds: 600), () {
+      Timer(Duration(milliseconds: 300), () {
         if (timer != null) {
           timer?.cancel();
         }
