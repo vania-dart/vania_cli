@@ -1,6 +1,5 @@
 import 'dart:io';
-
-import 'package:vania_cli/utils/functions.dart';
+import 'package:vania_cli/common/recase.dart';
 import 'command.dart';
 
 String middlewareStub = '''
@@ -40,7 +39,7 @@ class CreateMiddlewareCommand implements Command {
     String middlewareName = arguments[0];
 
     String filePath =
-        '${Directory.current.path}/lib/app/http/middleware/${pascalToSnake(middlewareName)}.dart';
+        '${Directory.current.path}/lib/app/http/middleware/${middlewareName.snakeCase}.dart';
     File newFile = File(filePath);
 
     if (newFile.existsSync()) {
@@ -51,7 +50,7 @@ class CreateMiddlewareCommand implements Command {
     newFile.createSync(recursive: true);
 
     String str = middlewareStub.replaceFirst(
-        'MiddlewareName', snakeToPascal(middlewareName));
+        'MiddlewareName', middlewareName.pascalCase);
 
     newFile.writeAsString(str);
 

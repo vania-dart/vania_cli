@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:vania_cli/common/recase.dart';
 import 'package:vania_cli/utils/functions.dart';
 import 'command.dart';
 
@@ -102,7 +103,7 @@ class CreateMigrationCommand implements Command {
     Match? repositoriesBlockMatch = constructorRegex.firstMatch(fileContents);
 
     fileContents = fileContents.replaceAll(constructorRegex,
-        '''registry() async{\n\t\t${repositoriesBlockMatch?.group(1)}\n\t\t await ${snakeToPascal(migrationName)}().up();\n\t}''');
+        '''registry() async{\n\t\t${repositoriesBlockMatch?.group(1)}\n\t\t await ${migrationName.pascalCase}().up();\n\t}''');
     migrate.writeAsStringSync(fileContents);
 
     print(

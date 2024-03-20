@@ -1,6 +1,5 @@
 import 'dart:io';
-
-import 'package:vania_cli/utils/functions.dart';
+import 'package:vania_cli/common/recase.dart';
 import 'command.dart';
 
 String serviceProviderStub = '''
@@ -16,7 +15,7 @@ class ServiceProviderName extends ServiceProvider{
 }
 ''';
 
-class CreateSrviceProviderCommand implements Command {
+class CreateServiceProviderCommand implements Command {
   @override
   String get name => 'make:provider';
 
@@ -42,7 +41,7 @@ class CreateSrviceProviderCommand implements Command {
     String providerName = arguments[0];
 
     String filePath =
-        '${Directory.current.path}/lib/app/providers/${pascalToSnake(providerName)}.dart';
+        '${Directory.current.path}/lib/app/providers/${providerName.snakeCase}.dart';
     File newFile = File(filePath);
 
     if (newFile.existsSync()) {
@@ -53,7 +52,7 @@ class CreateSrviceProviderCommand implements Command {
     newFile.createSync(recursive: true);
 
     String str = serviceProviderStub.replaceAll(
-        'ServiceProviderName', snakeToPascal(providerName));
+        'ServiceProviderName', providerName.pascalCase);
 
     newFile.writeAsString(str);
 

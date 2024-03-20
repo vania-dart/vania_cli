@@ -1,6 +1,5 @@
 import 'dart:io';
-
-import 'package:vania_cli/utils/functions.dart';
+import 'package:vania_cli/common/recase.dart';
 import 'command.dart';
 
 String modelStub = '''
@@ -52,7 +51,7 @@ class CreateModelCommand implements Command {
     String modelName = arguments[0];
 
     String filePath =
-        '${Directory.current.path}/lib/app/models/${pascalToSnake(modelName)}.dart';
+        '${Directory.current.path}/lib/app/models/${modelName.snakeCase}.dart';
     File newFile = File(filePath);
 
     if (newFile.existsSync()) {
@@ -65,7 +64,7 @@ class CreateModelCommand implements Command {
     String tableName = arguments[1];
 
     String str = modelStub
-        .replaceAll('ModelName', snakeToPascal(modelName))
+        .replaceAll('ModelName', modelName.pascalCase)
         .replaceFirst('TableName', tableName.toLowerCase());
 
     newFile.writeAsString(str);
