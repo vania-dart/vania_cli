@@ -1,16 +1,13 @@
 import 'dart:io';
-
-import 'package:vania_cli/utils/functions.dart';
+import 'package:vania_cli/common/recase.dart';
 
 import 'command.dart';
 
 String controllerStubs = '''
 import 'package:vania/vania.dart';
 
-
 class controllerName extends Controller {
 
-     
      Future<Response> index() async {
           return Response.json({'message':'Hello World'});
      }
@@ -38,7 +35,6 @@ class controllerName extends Controller {
      Future<Response> destroy(int id) async {
           return Response.json({});
      }
-
 }
 
 final controllerName varName = controllerName();
@@ -81,7 +77,7 @@ class CreateControllerCommand implements Command {
     }
 
     String controllerPath =
-        '${Directory.current.path}/lib/app/http/controllers/$secondPath${pascalToSnake(controllerName)}.dart';
+        '${Directory.current.path}/lib/app/http/controllers/$secondPath${controllerName.snakeCase}.dart';
     File newFile = File(controllerPath);
 
     if (newFile.existsSync()) {
@@ -92,8 +88,8 @@ class CreateControllerCommand implements Command {
     newFile.createSync(recursive: true);
 
     String str = controllerStubs
-        .replaceAll('controllerName', snakeToPascal(controllerName))
-        .replaceFirst('varName', firstLetterLowerCase(controllerName));
+        .replaceAll('controllerName', controllerName.pascalCase)
+        .replaceFirst('varName', controllerName.camelCase);
 
     newFile.writeAsString(str);
 

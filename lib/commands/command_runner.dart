@@ -13,7 +13,7 @@ import 'new_project.dart';
 import 'serve_command.dart';
 import 'serve_down_command.dart';
 import 'update_command.dart';
-import 'creeate_mail_command.dart';
+import 'create_mail_command.dart';
 
 class CommandRunner {
   final Map<String, Command> _commands = {
@@ -27,7 +27,7 @@ class CommandRunner {
     'make:migration': CreateMigrationCommand(),
     'make:model': CreateModelCommand(),
     'make:mail': CreateMailCommand(),
-    'make:provider': CreateSrviceProviderCommand(),
+    'make:provider': CreateServiceProviderCommand(),
     'migrate': MigrateCommand(),
   };
 
