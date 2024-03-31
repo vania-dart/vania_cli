@@ -1,3 +1,8 @@
+## 0.0.7
+
+- Updated create new project command
+- Fixed RegExp when create new file
+
 ## 0.0.6
 
 - Added make mail command

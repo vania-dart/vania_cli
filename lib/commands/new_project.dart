@@ -48,7 +48,7 @@ class NewProject implements Command {
       }
     }
 
-    File configFile = File('${projectFolder.path}/lib/config/app.dart');
+    File configFile = File('${projectFolder.path}/.env');
 
     if (configFile.existsSync()) {
       configFile.writeAsStringSync(configFile

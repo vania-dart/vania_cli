@@ -56,7 +56,7 @@ class CreateControllerCommand implements Command {
       arguments.add(stdin.readLineSync()!);
     }
 
-    RegExp alphaRegex = RegExp(r'^[a-zA-Z]+(?:[/\\_][a-zA-Z]+)*$');
+    RegExp alphaRegex = RegExp(r'^[a-zA-Z]+(?:[/\\_][a-zA-Z][0-9]+)*$');
 
     if (!alphaRegex.hasMatch(arguments[0])) {
       print(
