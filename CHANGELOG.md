@@ -1,3 +1,7 @@
+## 0.0.7+1
+
+- Fixed name issues on all commands
+
 ## 0.0.7
 
 - Updated create new project command

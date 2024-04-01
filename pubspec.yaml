@@ -1,6 +1,6 @@
 name: vania_cli
 description: A Command-Line Interface for Vania dart web application to create new projects, controllers, models, migrations, middlewares, build and serve Vania project
-version: 0.0.7
+version: 0.0.7+1
 repository: https://github.com/vania-dart/vania_cli
 homepage: https://vdart.dev
 documentation: https://vdart.dev/docs/intro

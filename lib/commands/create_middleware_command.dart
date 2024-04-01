@@ -28,11 +28,11 @@ class CreateMiddlewareCommand implements Command {
       arguments.add(stdin.readLineSync()!);
     }
 
-    RegExp alphaRegex = RegExp(r'^[a-zA-Z]+(?:[_][a-zA-Z][0-9]+)*$');
+    RegExp alphaRegex = RegExp(r'^[a-zA-Z][a-zA-Z0-9_/\\]*$');
 
     if (!alphaRegex.hasMatch(arguments[0])) {
       print(
-          ' \x1B[41m\x1B[37m ERROR \x1B[0m Middleware must contain only letters a-z and optional _');
+          ' \x1B[41m\x1B[37m ERROR \x1B[0m Middleware must contain only letters a-z, numbers 0-9 and optional _');
       exit(0);
     }
 
