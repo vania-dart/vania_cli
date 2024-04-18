@@ -19,12 +19,13 @@ class MigrationName extends Migration {
 }
 ''';
 
-String fileContents = '''
+String migrateFileContents = '''
 import 'dart:io';
 import 'package:vania/vania.dart';
 import '../../config/database.dart';
 
 void main() async {
+  Env().load();
   await Migrate().registry();
   await MigrationConnection().closeConnection();
   exit(0);
@@ -87,24 +88,25 @@ class CreateMigrationCommand implements Command {
     if (!migrate.existsSync()) {
       migrate.createSync(recursive: true);
     } else {
-      fileContents = migrate.readAsStringSync();
+      migrateFileContents = migrate.readAsStringSync();
     }
 
     final importRegExp = RegExp(r'import .+;');
-    var importMatch = importRegExp.allMatches(fileContents);
+    var importMatch = importRegExp.allMatches(migrateFileContents);
 
-    fileContents = fileContents.replaceFirst(
+    migrateFileContents = migrateFileContents.replaceFirst(
         importMatch.last.group(0).toString(),
         "${importMatch.last.group(0).toString()}\nimport '$migrationName.dart';");
 
     final constructorRegex =
         RegExp(r'registry\s*\(\s*\)\s*async?\s*\{\s*([\s\S]*?)\s*\}');
 
-    Match? repositoriesBlockMatch = constructorRegex.firstMatch(fileContents);
+    Match? repositoriesBlockMatch =
+        constructorRegex.firstMatch(migrateFileContents);
 
-    fileContents = fileContents.replaceAll(constructorRegex,
+    migrateFileContents = migrateFileContents.replaceAll(constructorRegex,
         '''registry() async{\n\t\t${repositoriesBlockMatch?.group(1)}\n\t\t await ${migrationName.pascalCase}().up();\n\t}''');
-    migrate.writeAsStringSync(fileContents);
+    migrate.writeAsStringSync(migrateFileContents);
 
     print(
         ' \x1B[44m\x1B[37m INFO \x1B[0m Migration [$filePath] created successfully.');

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import '../service/service.dart';
+import 'auth_command.dart';
 import 'build_command.dart';
 import 'command.dart';
 import 'create_controller_command.dart';
@@ -22,6 +23,7 @@ class CommandRunner {
     'down': ServeDownCommand(),
     'build': BuildCommand(),
     'update': UpdateCommand(),
+    'make:auth': AuthCommand(),
     'make:controller': CreateControllerCommand(),
     'make:middleware': CreateMiddlewareCommand(),
     'make:migration': CreateMigrationCommand(),

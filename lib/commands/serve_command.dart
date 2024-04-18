@@ -37,7 +37,7 @@ class ServeCommand implements Command {
           timer?.cancel();
         }
 
-        timer = Timer(Duration(milliseconds: 300), () async {
+        timer = Timer(Duration(milliseconds: 100), () async {
           process?.kill();
           int? exitCode = await process?.exitCode;
           if (exitCode.toString().isNotEmpty) {
@@ -49,7 +49,7 @@ class ServeCommand implements Command {
 
     ProcessSignal.sigint.watch().listen((signal) {
       print('Stopping the server...');
-      Timer(Duration(milliseconds: 300), () {
+      Timer(Duration(milliseconds: 100), () {
         if (timer != null) {
           timer?.cancel();
         }

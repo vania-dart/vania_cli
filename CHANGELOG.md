@@ -1,3 +1,7 @@
+## 0.0.8
+
+- Added Auth command
+
 ## 0.0.7+1
 
 - Fixed name issues on all commands
