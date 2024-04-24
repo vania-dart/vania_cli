@@ -33,17 +33,20 @@ class ServeCommand implements Command {
       if (path.extension(event.path) == '.dart') {
         print("\x1B[32m File changed: ${path.basename(event.path)} \x1B[0m");
         print("Restarting the server....");
-        if (timer != null) {
+        try {
           timer?.cancel();
-        }
 
-        timer = Timer(Duration(milliseconds: 100), () async {
-          process?.kill();
-          int? exitCode = await process?.exitCode;
-          if (exitCode.toString().isNotEmpty) {
-            process = await _serve(vmService);
-          }
-        });
+          timer = Timer(Duration(milliseconds: 100), () async {
+            process?.kill();
+            int? exitCode = await process?.exitCode;
+            if (exitCode.toString().isNotEmpty) {
+              process = await _serve(vmService);
+              print("Done!");
+            }
+          });
+        } catch (e) {
+          print("\x1B[31mAn error occurred: $e\x1B[0m");
+        }
       }
     });
 
