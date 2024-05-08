@@ -5,16 +5,18 @@ import 'auth_command.dart';
 import 'build_command.dart';
 import 'command.dart';
 import 'create_controller_command.dart';
+import 'create_database_seeder_command.dart';
+import 'create_mail_command.dart';
 import 'create_middleware_command.dart';
 import 'create_migration_command.dart';
 import 'create_model_command.dart';
 import 'create_service_provider_command.dart';
 import 'migrate_command.dart';
+import 'migrate_databse_seeder_command.dart';
 import 'new_project.dart';
 import 'serve_command.dart';
 import 'serve_down_command.dart';
 import 'update_command.dart';
-import 'create_mail_command.dart';
 
 class CommandRunner {
   final Map<String, Command> _commands = {
@@ -31,12 +33,13 @@ class CommandRunner {
     'make:mail': CreateMailCommand(),
     'make:provider': CreateServiceProviderCommand(),
     'migrate': MigrateCommand(),
+    'db:seed': CreateDatabaseSeederCommand(),
+    'migrate:seed': MigrateDatabaseSeederCommand(),
   };
 
   void run(List<String> arguments) async {
     if (arguments.isEmpty) {
-      print(
-          '\x1B[32m -V, --version  \x1B[0m\t\t Display this application version');
+      print('\x1B[32m -V, --version  \x1B[0m\t\t Display this application version');
       _commands.forEach((name, command) {
         print('\x1B[32m$name\x1B[0m\t\t${command.description}');
       });
@@ -45,9 +48,7 @@ class CommandRunner {
 
     final commandName = arguments[0].toString().toLowerCase();
 
-    if (commandName == '-V' ||
-        commandName == '--version' ||
-        commandName == '--v') {
+    if (commandName == '-V' || commandName == '--version' || commandName == '--v') {
       String version = await Service().fetchVaniaVersion();
       print(' \x1B[1mVania Dart Framework \x1B[32m $version  \x1B[0m');
       return;
@@ -56,15 +57,12 @@ class CommandRunner {
     final command = _commands[commandName];
 
     if (command == null) {
-      print(
-          ' \x1B[41m\x1B[37m ERROR \x1B[0m Command "$commandName" is not defined.');
+      print(' \x1B[41m\x1B[37m ERROR \x1B[0m Command "$commandName" is not defined.');
       return;
     }
 
-    if (!Directory('${Directory.current.path}/lib').existsSync() &&
-        !(commandName == 'create' || commandName == 'update')) {
-      print(
-          '\x1B[41m\x1B[37m ERROR \x1B[0m Please run this command from the root directory of the Vania project');
+    if (!Directory('${Directory.current.path}/lib').existsSync() && !(commandName == 'create' || commandName == 'update')) {
+      print('\x1B[41m\x1B[37m ERROR \x1B[0m Please run this command from the root directory of the Vania project');
       exit(0);
     }
 
