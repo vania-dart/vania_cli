@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:intl/intl.dart';
 import 'package:vania_cli/common/recase.dart';
 import 'package:vania_cli/utils/functions.dart';
+
 import 'command.dart';
 
 String migrationStub = '''
@@ -11,30 +13,47 @@ class MigrationName extends Migration {
 
   @override
   Future<void> up() async{
-    super.up();
+   super.up();
    await createTableNotExists('TableName', () {
       id();
+      timeStamps();
     });
+  }
+  
+  @override
+  Future<void> down() async {
+    super.down();
+    await dropIfExists('DropTableName');
   }
 }
 ''';
 
 String migrateFileContents = '''
 import 'dart:io';
+
 import 'package:vania/vania.dart';
+
 import '../../config/database.dart';
 
-void main() async {
+void main(List<String> args) async {
   Env().load();
-  await Migrate().registry();
+  if (args.isNotEmpty && args.first.toLowerCase() == "migrate:fresh") {
+    await Migrate().dropTables();
+  } else {
+    await Migrate().registry();
+  }
   await MigrationConnection().closeConnection();
   exit(0);
 }
 
 class Migrate {
   registry() async {
-		await MigrationConnection().setup(databaseConfig);
-	}
+    await MigrationConnection().setup(databaseConfig);
+  }
+
+  dropTables() async {
+    await MigrationConnection().setup(databaseConfig);
+  }
 }
 ''';
 
@@ -63,8 +82,14 @@ class CreateMigrationCommand implements Command {
 
     String migrationName = arguments[0];
 
+    String formattedDateTime =
+        "${DateFormat('yyyy_MM_dd_HHmmss').format(DateTime.now().toLocal())}_";
+
+    String migrationFileName =
+        "$formattedDateTime${pascalToSnake(migrationName)}.dart";
+
     String filePath =
-        '${Directory.current.path}/lib/database/migrations/${pascalToSnake(migrationName)}.dart';
+        '${Directory.current.path}/lib/database/migrations/$migrationFileName';
     File newFile = File(filePath);
 
     if (newFile.existsSync()) {
@@ -78,7 +103,8 @@ class CreateMigrationCommand implements Command {
         migrationName.replaceAll('create_', '').replaceAll('_table', '');
     String str = migrationStub
         .replaceFirst('MigrationName', snakeToPascal(migrationName))
-        .replaceFirst('TableName', tableName);
+        .replaceFirst('TableName', tableName)
+        .replaceFirst('DropTableName', tableName);
 
     newFile.writeAsString(str);
 
@@ -92,20 +118,38 @@ class CreateMigrationCommand implements Command {
     }
 
     final importRegExp = RegExp(r'import .+;');
-    var importMatch = importRegExp.allMatches(migrateFileContents);
-
-    migrateFileContents = migrateFileContents.replaceFirst(
-        importMatch.last.group(0).toString(),
-        "${importMatch.last.group(0).toString()}\nimport '$migrationName.dart';");
-
-    final constructorRegex =
+    final registryConstructorRegex =
         RegExp(r'registry\s*\(\s*\)\s*async?\s*\{\s*([\s\S]*?)\s*\}');
+    final dropTableConstructorRegex =
+        RegExp(r'dropTables\s*\(\s*\)\s*async?\s*\{\s*([\s\S]*?)\s*\}');
 
-    Match? repositoriesBlockMatch =
-        constructorRegex.firstMatch(migrateFileContents);
+    // Find import statement and append new import
+    var importMatch = importRegExp.allMatches(migrateFileContents);
+    if (importMatch.isNotEmpty) {
+      migrateFileContents = migrateFileContents.replaceFirst(
+        importMatch.last.group(0).toString(),
+        "${importMatch.last.group(0)}\nimport '$migrationFileName';",
+      );
+    }
 
-    migrateFileContents = migrateFileContents.replaceAll(constructorRegex,
-        '''registry() async{\n\t\t${repositoriesBlockMatch?.group(1)}\n\t\t await ${migrationName.pascalCase}().up();\n\t}''');
+    // Find registry and dropTables constructors, and replace with modified versions
+    Match? registryRepositoriesBlockMatch =
+        registryConstructorRegex.firstMatch(migrateFileContents);
+    Match? dropTableRepositoriesBlockMatch =
+        dropTableConstructorRegex.firstMatch(migrateFileContents);
+
+    if (registryRepositoriesBlockMatch != null &&
+        dropTableRepositoriesBlockMatch != null) {
+      migrateFileContents = migrateFileContents.replaceAll(
+        registryConstructorRegex,
+        '''registry() async {\n\t\t${registryRepositoriesBlockMatch.group(1)}\n\t\t await ${migrationName.pascalCase}().up();\n\t}''',
+      ).replaceAll(
+        dropTableConstructorRegex,
+        '''dropTables() async {\n\t\t${dropTableRepositoriesBlockMatch.group(1)}\n\t\t await ${migrationName.pascalCase}().down();\n\t }''',
+      );
+    }
+
+    // Write modified content back to file
     migrate.writeAsStringSync(migrateFileContents);
 
     print(
