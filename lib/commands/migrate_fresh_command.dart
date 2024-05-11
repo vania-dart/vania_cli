@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:vania_cli/models/migrate_file_model.dart';
@@ -45,7 +46,7 @@ class MigrateFreshCommand implements Command {
     List<MigrateFileModel> migrationFiles = getMigrationFileList(files);
 
     String migrationFilePath =
-        "${Directory.current.path}/lib/database/migrations/.migrate.dart";
+        "${Directory.current.path}/lib/database/migrations/.drop_migrate.dart";
     File migrate = File(migrationFilePath);
 
     if (!migrate.existsSync()) {
@@ -85,13 +86,19 @@ class MigrateFreshCommand implements Command {
       }
     }
 
-    await Process.start(
-      'dart',
-      [
-        'run',
-        migrationFilePath,
-      ],
-    );
+    Process process = await Process.start('dart', [
+      'run',
+      migrationFilePath,
+    ]);
+
+    await for (var data in process.stdout.transform(utf8.decoder)) {
+      List lines = data.split("\n");
+      for (String line in lines) {
+        if (line.isNotEmpty) {
+          print(line);
+        }
+      }
+    }
 
     ///Delete the migration file after database down
     migrate.delete();
