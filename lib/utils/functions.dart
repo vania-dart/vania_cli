@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+
 import 'package:path/path.dart' as path;
 import 'package:vania_cli/common/constants.dart';
+import 'package:vania_cli/models/migrate_file_model.dart';
 
 String snakeToPascal(String name) {
   return name
@@ -77,4 +79,31 @@ Future<Map<String, dynamic>?> getDartToolVaniaConfig() async {
     } catch (_) {}
   }
   return null;
+}
+
+List<MigrateFileModel> getMigrationFileList(List<FileSystemEntity> files) {
+  List<MigrateFileModel> classNameList = [];
+  for (final file in files) {
+    String fileName = file.path.split("/").last;
+    String fileContent = File(file.path).readAsStringSync();
+    List<String> lines = fileContent.split("\n");
+    for (final line in lines) {
+      if (!line.trim().startsWith('import')) {
+        RegExp regex =
+            RegExp(r'class\s+(\w+)\s*(extends|implements)?\s*(\w+)?\s*{');
+        Match? match = regex.firstMatch(line);
+        if (match != null) {
+          String className = match.group(1) ?? "";
+          classNameList.add(
+            MigrateFileModel(
+              name: className,
+              path: file.path,
+              fileName: fileName,
+            ),
+          );
+        }
+      }
+    }
+  }
+  return classNameList;
 }
