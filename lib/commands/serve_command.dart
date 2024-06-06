@@ -25,6 +25,11 @@ class ServeCommand implements Command {
 
     Process? process = await _serve(vmService);
 
+    print('Vania run key commands');
+    print('R Hot restart');
+    print('c Clear the screen');
+    print('q Quit (terminate the application)');
+
     /// save process info on `.dartTool` folder for upcoming serve features
     /// like down, up, etc
     _updateDartToolVaniaConfig(process);
@@ -70,7 +75,7 @@ class ServeCommand implements Command {
         timer = await _restart(process, vmService);
       } else if (event.isNotEmpty && event[0] == 'q'.codeUnitAt(0)) {
         print('Stopping the server...');
-        Timer(Duration(milliseconds: 300), () {
+        Timer(Duration(milliseconds: 500), () {
           if (timer != null) {
             timer!.cancel();
           }
@@ -128,11 +133,6 @@ class ServeCommand implements Command {
         }
       }
     });
-
-    print('Vania run key commands');
-    print('R Hot restart');
-    print('c Clear the screen');
-    print('q Quit (terminate the application)');
     return process;
   }
 
