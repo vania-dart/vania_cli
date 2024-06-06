@@ -31,22 +31,15 @@ class ServeCommand implements Command {
 
     watcher.events.listen((event) async {
       if (path.extension(event.path) == '.dart') {
+        stdout.write('\x1B[2J\x1B[0;0H');
         print("\x1B[32m File changed: ${path.basename(event.path)} \x1B[0m");
         print("Restarting the server....");
-        try {
-          timer?.cancel();
 
-          timer = Timer(Duration(milliseconds: 100), () async {
-            process?.kill();
-            int? exitCode = await process?.exitCode;
-            if (exitCode.toString().isNotEmpty) {
-              process = await _serve(vmService);
-              print("Done!");
-            }
-          });
-        } catch (e) {
-          print("\x1B[31mAn error occurred: $e\x1B[0m");
+        if (timer != null) {
+          timer!.cancel();
         }
+
+        timer = await _restart(process, vmService);
       }
     });
 
@@ -54,21 +47,68 @@ class ServeCommand implements Command {
       print('Stopping the server...');
       Timer(Duration(milliseconds: 100), () {
         if (timer != null) {
-          timer?.cancel();
+          timer!.cancel();
         }
-        process?.kill();
+
+        process.kill();
         print('Server down');
         exit(0);
       });
     });
+
+    stdin.echoMode = false;
+    stdin.lineMode = false;
+    stdin.listen((List<int> event) async {
+      if (event.isNotEmpty && event[0] == 'R'.codeUnitAt(0)) {
+        stdout.write('\x1B[2J\x1B[0;0H');
+        stdout.write('Performing hot restart...\n');
+
+        if (timer != null) {
+          timer!.cancel();
+        }
+
+        timer = await _restart(process, vmService);
+      } else if (event.isNotEmpty && event[0] == 'q'.codeUnitAt(0)) {
+        print('Stopping the server...');
+        Timer(Duration(milliseconds: 300), () {
+          if (timer != null) {
+            timer!.cancel();
+          }
+          process.kill();
+          print('Server down');
+          exit(0);
+        });
+      } else if (event.isNotEmpty && event[0] == 'c'.codeUnitAt(0)) {
+        stdout.write('\x1B[2J\x1B[0;0H');
+      }
+    });
+  }
+
+  Future<Timer?> _restart(
+    Process process,
+    String? vmService,
+  ) async {
+    try {
+      return Timer(Duration(milliseconds: 100), () async {
+        process.kill();
+        int? exitCode = await process.exitCode;
+        if (exitCode.toString().isNotEmpty) {
+          process = await _serve(vmService);
+        }
+      });
+    } catch (e) {
+      print("\x1B[31mAn error occurred: $e\x1B[0m");
+      throw ('Error');
+    }
   }
 
   Future<Process> _serve(String? vm) async {
     Process process;
+
     if (vm == null) {
-      process = await Process.start('dart', ['bin/server.dart']);
+      process = await Process.start('dart', ['run', 'bin/server.dart']);
     } else {
-      process = await Process.start('dart', [vm, 'bin/server.dart']);
+      process = await Process.start('dart', ['run', vm, 'bin/server.dart']);
     }
 
     process.stdout.transform(utf8.decoder).listen((data) {
@@ -89,6 +129,10 @@ class ServeCommand implements Command {
       }
     });
 
+    print('Vania run key commands');
+    print('R Hot restart');
+    print('c Clear the screen');
+    print('q Quit (terminate the application)');
     return process;
   }
 

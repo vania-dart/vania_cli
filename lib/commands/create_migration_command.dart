@@ -33,12 +33,10 @@ import 'dart:io';
 
 import 'package:vania/vania.dart';
 
-import '../../config/database.dart';
-
 void main(List<String> args) async {
-  Env().load();
   if (args.isNotEmpty && args.first.toLowerCase() == "migrate:fresh") {
     await Migrate().dropTables();
+    await Migrate().registry();
   } else {
     await Migrate().registry();
   }
@@ -48,11 +46,11 @@ void main(List<String> args) async {
 
 class Migrate {
   registry() async {
-    await MigrationConnection().setup(databaseConfig);
+    await MigrationConnection().setup();
   }
 
   dropTables() async {
-    await MigrationConnection().setup(databaseConfig);
+    await MigrationConnection().setup();
   }
 }
 ''';
