@@ -50,7 +50,8 @@ class CreateDatabaseSeederCommand implements Command {
     RegExp alphaRegex = RegExp(r'^[a-zA-Z][a-zA-Z0-9_/\\]*$');
 
     if (!alphaRegex.hasMatch(arguments[0])) {
-      print(' \x1B[41m\x1B[37m ERROR \x1B[0m Seeder must contain only letters a-z, numbers 0-9 and optional _');
+      print(
+          ' \x1B[41m\x1B[37m ERROR \x1B[0m Seeder must contain only letters a-z, numbers 0-9 and optional _');
       exit(0);
     }
 
@@ -66,7 +67,8 @@ class CreateDatabaseSeederCommand implements Command {
       secondPath = secondPath.endsWith("/") ? secondPath : "$secondPath/";
     }
 
-    String controllerPath = '${Directory.current.path}/lib/database/seeders/$secondPath${seederName.snakeCase}.dart';
+    String controllerPath =
+        '${Directory.current.path}/lib/database/seeders/$secondPath${seederName.snakeCase}.dart';
     File newFile = File(controllerPath);
 
     if (newFile.existsSync()) {
@@ -81,7 +83,8 @@ class CreateDatabaseSeederCommand implements Command {
     newFile.writeAsString(str);
 
     ///Register new seeder file into main database seeder file
-    File databaseSeederFile = File('${Directory.current.path}/lib/database/seeders/database_seeder.dart');
+    File databaseSeederFile = File(
+        '${Directory.current.path}/lib/database/seeders/database_seeder.dart');
 
     if (!databaseSeederFile.existsSync()) {
       databaseSeederFile.createSync(recursive: true);
@@ -92,15 +95,21 @@ class CreateDatabaseSeederCommand implements Command {
     final importRegExp = RegExp(r'import .+;');
     var importMatch = importRegExp.allMatches(seedersFileContents);
 
-    seedersFileContents = seedersFileContents.replaceFirst(importMatch.last.group(0).toString(), "${importMatch.last.group(0).toString()}\nimport '${seederName.snakeCase}.dart';");
+    seedersFileContents = seedersFileContents.replaceFirst(
+        importMatch.last.group(0).toString(),
+        "${importMatch.last.group(0).toString()}\nimport '${seederName.snakeCase}.dart';");
 
-    final constructorRegex = RegExp(r'registry\s*\(\s*\)\s*async?\s*\{\s*([\s\S]*?)\s*\}');
+    final constructorRegex =
+        RegExp(r'registry\s*\(\s*\)\s*async?\s*\{\s*([\s\S]*?)\s*\}');
 
-    Match? repositoriesBlockMatch = constructorRegex.firstMatch(seedersFileContents);
+    Match? repositoriesBlockMatch =
+        constructorRegex.firstMatch(seedersFileContents);
 
-    seedersFileContents = seedersFileContents.replaceAll(constructorRegex, '''registry() async{\n\t\t${repositoriesBlockMatch?.group(1)}\n\t\t await ${seederName.pascalCase}().run();\n\t}''');
+    seedersFileContents = seedersFileContents.replaceAll(constructorRegex,
+        '''registry() async{\n\t\t${repositoriesBlockMatch?.group(1)}\n\t\t await ${seederName.pascalCase}().run();\n\t}''');
     databaseSeederFile.writeAsStringSync(seedersFileContents);
 
-    print(' \x1B[44m\x1B[37m INFO \x1B[0m Seeder [$controllerPath] created successfully.');
+    print(
+        ' \x1B[44m\x1B[37m INFO \x1B[0m Seeder [$controllerPath] created successfully.');
   }
 }

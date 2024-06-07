@@ -1,3 +1,8 @@
+## 1.1.0
+
+- Add Terminate open port
+- Fix serve command issue
+
 ## 1.0.0
 
 - Add Hot reload

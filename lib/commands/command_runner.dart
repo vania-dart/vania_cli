@@ -11,6 +11,7 @@ import 'create_middleware_command.dart';
 import 'create_migration_command.dart';
 import 'create_model_command.dart';
 import 'create_service_provider_command.dart';
+import 'terminate_port_command.dart';
 import 'migrate_command.dart';
 import 'migrate_databse_seeder_command.dart';
 import 'migrate_fresh_command.dart';
@@ -37,6 +38,7 @@ class CommandRunner {
     'db:seed': CreateDatabaseSeederCommand(),
     'migrate:seed': MigrateDatabaseSeederCommand(),
     'migrate:fresh': MigrateFreshCommand(),
+    'terminate-port': TerminateOpenPortCommand(),
   };
 
   void run(List<String> arguments) async {

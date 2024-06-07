@@ -17,7 +17,7 @@ class ServeCommand implements Command {
   @override
   void execute(List<String> arguments) async {
     DirectoryWatcher watcher = DirectoryWatcher(Directory.current.path);
-    Timer? timer;
+
     String? vmService;
     if (arguments.isNotEmpty && arguments[0].toLowerCase() == '--vm') {
       vmService = '--enable-vm-service';
@@ -40,22 +40,25 @@ class ServeCommand implements Command {
         print("\x1B[32m File changed: ${path.basename(event.path)} \x1B[0m");
         print("Restarting the server....");
 
-        if (timer != null) {
-          timer!.cancel();
-        }
-
-        timer = await _restart(process, vmService);
+        Future.delayed(Duration(milliseconds: 100), () async {
+          try {
+            process?.kill();
+            int? exitCode = await process?.exitCode;
+            if (exitCode.toString().isNotEmpty) {
+              process = await _serve(vmService);
+            }
+          } catch (e) {
+            print("\x1B[31mAn error occurred: $e\x1B[0m");
+            throw ('Error');
+          }
+        });
       }
     });
 
     ProcessSignal.sigint.watch().listen((signal) {
       print('Stopping the server...');
-      Timer(Duration(milliseconds: 100), () {
-        if (timer != null) {
-          timer!.cancel();
-        }
-
-        process.kill();
+      Future.delayed(Duration(milliseconds: 100), () async {
+        process?.kill();
         print('Server down');
         exit(0);
       });
@@ -68,18 +71,22 @@ class ServeCommand implements Command {
         stdout.write('\x1B[2J\x1B[0;0H');
         stdout.write('Performing hot restart...\n');
 
-        if (timer != null) {
-          timer!.cancel();
-        }
-
-        timer = await _restart(process, vmService);
+        Future.delayed(Duration(milliseconds: 100), () async {
+          try {
+            process?.kill();
+            int? exitCode = await process?.exitCode;
+            if (exitCode.toString().isNotEmpty) {
+              process = await _serve(vmService);
+            }
+          } catch (e) {
+            print("\x1B[31mAn error occurred: $e\x1B[0m");
+            throw ('Error');
+          }
+        });
       } else if (event.isNotEmpty && event[0] == 'q'.codeUnitAt(0)) {
         print('Stopping the server...');
-        Timer(Duration(milliseconds: 500), () {
-          if (timer != null) {
-            timer!.cancel();
-          }
-          process.kill();
+        Future.delayed(Duration(milliseconds: 100), () async {
+          process?.kill();
           print('Server down');
           exit(0);
         });
@@ -87,24 +94,6 @@ class ServeCommand implements Command {
         stdout.write('\x1B[2J\x1B[0;0H');
       }
     });
-  }
-
-  Future<Timer?> _restart(
-    Process process,
-    String? vmService,
-  ) async {
-    try {
-      return Timer(Duration(milliseconds: 100), () async {
-        process.kill();
-        int? exitCode = await process.exitCode;
-        if (exitCode.toString().isNotEmpty) {
-          process = await _serve(vmService);
-        }
-      });
-    } catch (e) {
-      print("\x1B[31mAn error occurred: $e\x1B[0m");
-      throw ('Error');
-    }
   }
 
   Future<Process> _serve(String? vm) async {
