@@ -39,7 +39,7 @@ class MailableName extends Mailable {
 
 class CreateMailCommand implements Command {
   @override
-  String get description => ' Create a new email class';
+  String get description => 'Create a new email class';
 
   @override
   String get name => 'make:mail';

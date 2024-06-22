@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:intl/intl.dart';
 import 'package:vania_cli/common/recase.dart';
 import 'package:vania_cli/utils/functions.dart';
 
@@ -34,6 +33,7 @@ import 'dart:io';
 import 'package:vania/vania.dart';
 
 void main(List<String> args) async {
+		await MigrationConnection().setup();
   if (args.isNotEmpty && args.first.toLowerCase() == "migrate:fresh") {
     await Migrate().dropTables();
     await Migrate().registry();
@@ -46,11 +46,9 @@ void main(List<String> args) async {
 
 class Migrate {
   registry() async {
-    await MigrationConnection().setup();
   }
 
   dropTables() async {
-    await MigrationConnection().setup();
   }
 }
 ''';
@@ -65,33 +63,28 @@ class CreateMigrationCommand implements Command {
   @override
   void execute(List<String> arguments) {
     if (arguments.isEmpty) {
-      print('  What should the migration be named?');
-      stdout.write('\x1B[1m > \x1B[0m');
+      stdout.writeln('  What should the migration be named?');
+      stdout.writeln('\x1B[1m > \x1B[0m');
       arguments.add(stdin.readLineSync()!);
     }
 
     RegExp alphaRegex = RegExp(r'^[a-zA-Z][a-zA-Z0-9_/\\]*$');
 
     if (!alphaRegex.hasMatch(arguments[0])) {
-      print(
+      stdout.writeln(
           ' \x1B[41m\x1B[37m ERROR \x1B[0m Migration must contain only letters a-z, numbers 0-9 and optional _');
       exit(0);
     }
 
     String migrationName = arguments[0];
 
-    String formattedDateTime =
-        "${DateFormat('yyyy_MM_dd_HHmmss').format(DateTime.now().toLocal())}_";
-
-    String migrationFileName =
-        "$formattedDateTime${pascalToSnake(migrationName)}.dart";
-
     String filePath =
-        '${Directory.current.path}/lib/database/migrations/$migrationFileName';
+        '${Directory.current.path}/lib/database/migrations/${pascalToSnake(migrationName)}';
     File newFile = File(filePath);
 
     if (newFile.existsSync()) {
-      print(' \x1B[41m\x1B[37m ERROR \x1B[0m Migration already exists.');
+      stdout
+          .writeln(' \x1B[41m\x1B[37m ERROR \x1B[0m Migration already exists.');
       exit(0);
     }
 
@@ -126,7 +119,7 @@ class CreateMigrationCommand implements Command {
     if (importMatch.isNotEmpty) {
       migrateFileContents = migrateFileContents.replaceFirst(
         importMatch.last.group(0).toString(),
-        "${importMatch.last.group(0)}\nimport '$migrationFileName';",
+        "${importMatch.last.group(0)}\nimport '${pascalToSnake(migrationName)}';",
       );
     }
 
@@ -140,17 +133,17 @@ class CreateMigrationCommand implements Command {
         dropTableRepositoriesBlockMatch != null) {
       migrateFileContents = migrateFileContents.replaceAll(
         registryConstructorRegex,
-        '''registry() async {\n\t\t${registryRepositoriesBlockMatch.group(1)}\n\t\t await ${migrationName.pascalCase}().up();\n\t}''',
+        '''registry() async {${registryRepositoriesBlockMatch.group(1)}\n\t\t await ${migrationName.pascalCase}().up();\n\t}''',
       ).replaceAll(
         dropTableConstructorRegex,
-        '''dropTables() async {\n\t\t${dropTableRepositoriesBlockMatch.group(1)}\n\t\t await ${migrationName.pascalCase}().down();\n\t }''',
+        '''dropTables() async {\n\t\t await ${migrationName.pascalCase}().down();\n\t\t ${dropTableRepositoriesBlockMatch.group(1)}\n\t }''',
       );
     }
 
     // Write modified content back to file
     migrate.writeAsStringSync(migrateFileContents);
 
-    print(
+    stdout.writeln(
         ' \x1B[44m\x1B[37m INFO \x1B[0m Migration [$filePath] created successfully.');
   }
 }

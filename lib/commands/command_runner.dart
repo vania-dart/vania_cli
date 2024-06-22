@@ -44,9 +44,14 @@ class CommandRunner {
   void run(List<String> arguments) async {
     if (arguments.isEmpty) {
       print(
-          '\x1B[32m -V, --version  \x1B[0m\t\t Display this application version');
+          '\x1B[32m -V, --version  \x1B[0m\tDisplay this application version');
+
+      int longestCommandLength =
+          _commands.keys.reduce((a, b) => a.length > b.length ? a : b).length;
+
       _commands.forEach((name, command) {
-        print('\x1B[32m$name\x1B[0m\t\t${command.description}');
+        final paddedName = name.padRight(longestCommandLength);
+        print('\x1B[32m$paddedName\x1B[0m\t\t${command.description}');
       });
       return;
     }

@@ -13,7 +13,7 @@ class NewProject implements Command {
   @override
   void execute(List<String> arguments) async {
     if (arguments.isEmpty) {
-      print('  What is the name of your project?:');
+      stdout.writeln('  What is the name of your project?:');
       stdout.write('\x1B[1m > \x1B[0m');
       arguments.add(stdin.readLineSync()!);
     }
@@ -23,11 +23,12 @@ class NewProject implements Command {
     final projectFolder = Directory('${Directory.current.path}/$projectName');
 
     if (projectFolder.existsSync()) {
-      print('\x1B[41m\x1B[37m ERROR \x1B[0m "$projectName" already exist');
+      stdout.writeln(
+          '\x1B[41m\x1B[37m ERROR \x1B[0m "$projectName" already exist');
       exit(0);
     }
 
-    print(' Creating a "Vania/Dart" project at "./$projectName"');
+    stdout.writeln(' Creating a "Vania/Dart" project at "./$projectName"');
 
     Process.runSync('git',
         ['clone', 'https://github.com/vania-dart/sample.git', projectName]);
@@ -66,21 +67,18 @@ class NewProject implements Command {
       List lines = data.split("\n");
       for (String line in lines) {
         if (line.isNotEmpty) {
-          print('\x1B[32m $line \x1B[0m');
+          stdout.write('\x1B[32m $line \x1B[0m\n');
         }
       }
     }).onDone(() {
-      print('\n\n\x1B[42m SUCCESS \x1B[0m All done! Build something amazing');
-      print(
-          'You can find general documentation for Vania at: https://vdart.dev/docs/intro/\n\n');
+      stdout.writeln(
+          '\n\n\x1B[42m SUCCESS \x1B[0m All done! Build something amazing');
+      stdout.writeln(
+          'You can find general documentation for Vania at: https://vdart.dev/docs/intro/\n');
 
-      print('In order to run your application, type:\n');
-      print(r' $ cd ' + projectName);
-      print(r' $ Vania serve');
-      print(
-          '\nYour configuration file is in $projectName\\lib\\config\\app.dart');
-      print(
-          'Your Api route file is in $projectName\\lib\\route\\api_route.dart\n');
+      stdout.writeln('In order to run your application, type:');
+      stdout.writeln(r' $ cd ' + projectName);
+      stdout.writeln(r' $ Vania serve');
     });
   }
 }

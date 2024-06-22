@@ -18,7 +18,7 @@ class UpdateCommand implements Command {
       List lines = data.split("\n");
       for (String line in lines) {
         if (line.isNotEmpty) {
-          print(line);
+          stdout.writeln(line);
         }
       }
     });
@@ -27,7 +27,7 @@ class UpdateCommand implements Command {
       List lines = data.split("\n");
       for (String line in lines) {
         if (line.isNotEmpty) {
-          print(line);
+          stdout.writeln(line);
         }
       }
     });

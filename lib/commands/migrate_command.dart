@@ -12,7 +12,7 @@ class MigrateCommand implements Command {
 
   @override
   void execute(List<String> arguments) async {
-    print('\x1B[32m Migration started \x1B[0m');
+    stdout.writeln('\x1B[32m Migration started \x1B[0m');
     Process process = await Process.start('dart', [
       'run',
       '${Directory.current.path}/lib/database/migrations/migrate.dart',
@@ -22,7 +22,7 @@ class MigrateCommand implements Command {
       List lines = data.split("\n");
       for (String line in lines) {
         if (line.isNotEmpty) {
-          print(line);
+          stdout.writeln(line);
         }
       }
     }

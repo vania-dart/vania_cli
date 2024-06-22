@@ -10,8 +10,12 @@ import 'package:vania/vania.dart';
 class seederName extends Seeder {
   @override
   Future<void> run() async {
-    // TODO: implement run
-    print("seederName call");
+    try {
+      // TODO: implement run
+      print("seederName call");
+    } catch (e) {
+      print(e.toString());
+    }
   }
 }
 
@@ -22,7 +26,10 @@ import 'dart:io';
 import 'package:vania/vania.dart';
 
 void main() async {
+  Env().load();
+  await DatabaseClient().setup();
   await DatabaseSeeder().registry();
+  await DatabaseClient().database?.close();
   exit(0);
 }
 
