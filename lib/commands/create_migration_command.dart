@@ -79,7 +79,7 @@ class CreateMigrationCommand implements Command {
     String migrationName = arguments[0];
 
     String filePath =
-        '${Directory.current.path}/lib/database/migrations/${pascalToSnake(migrationName)}';
+        '${Directory.current.path}/lib/database/migrations/${pascalToSnake(migrationName)}.dart';
     File newFile = File(filePath);
 
     if (newFile.existsSync()) {
@@ -119,7 +119,7 @@ class CreateMigrationCommand implements Command {
     if (importMatch.isNotEmpty) {
       migrateFileContents = migrateFileContents.replaceFirst(
         importMatch.last.group(0).toString(),
-        "${importMatch.last.group(0)}\nimport '${pascalToSnake(migrationName)}';",
+        "${importMatch.last.group(0)}\nimport '${pascalToSnake(migrationName)}.dart';",
       );
     }
 
@@ -129,15 +129,21 @@ class CreateMigrationCommand implements Command {
     Match? dropTableRepositoriesBlockMatch =
         dropTableConstructorRegex.firstMatch(migrateFileContents);
 
-    if (registryRepositoriesBlockMatch != null &&
-        dropTableRepositoriesBlockMatch != null) {
+    if (registryRepositoriesBlockMatch != null) {
       migrateFileContents = migrateFileContents.replaceAll(
         registryConstructorRegex,
-        '''registry() async {${registryRepositoriesBlockMatch.group(1)}\n\t\t await ${migrationName.pascalCase}().up();\n\t}''',
-      ).replaceAll(
+        '''registry() async {\n\t\t ${registryRepositoriesBlockMatch.group(1)}\n\t\t await ${migrationName.pascalCase}().up();\n\t}''',
+      );
+    }
+
+
+    if (dropTableRepositoriesBlockMatch != null) {
+      migrateFileContents = migrateFileContents.replaceAll(
         dropTableConstructorRegex,
         '''dropTables() async {\n\t\t await ${migrationName.pascalCase}().down();\n\t\t ${dropTableRepositoriesBlockMatch.group(1)}\n\t }''',
       );
+    }else{
+      migrateFileContents = '''$migrateFileContents\n\ndropTables() async {\n\t\t await ${migrationName.pascalCase}().down();\n\t }''';
     }
 
     // Write modified content back to file
