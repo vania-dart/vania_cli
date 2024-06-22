@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:vania_cli/commands/command.dart';
 
 String authMigrationContent = '''
@@ -20,6 +19,12 @@ class CreatePersonalAccessTokensTable extends Migration {
 
       index(ColumnIndex.unique, 'token', ['token']);
     });
+  }
+
+   @override
+  Future<void> down() async {
+    super.down();
+    await dropIfExists('personal_access_tokens');
   }
 }
 ''';
@@ -56,7 +61,7 @@ class AuthCommand extends Command {
 
     migrateFileContents = migrateFileContents.replaceFirst(
         importMatch.last.group(0).toString(),
-        "${importMatch.last.group(0).toString()}\nimport 'create_personal_access_tokens_table.dart';");
+        "${importMatch.last.group(0).toString()}\nimport '${filePath}create_personal_access_tokens_table.dart';");
 
     final constructorRegex =
         RegExp(r'registry\s*\(\s*\)\s*async?\s*\{\s*([\s\S]*?)\s*\}');
@@ -65,7 +70,7 @@ class AuthCommand extends Command {
         constructorRegex.firstMatch(migrateFileContents);
 
     migrateFileContents = migrateFileContents.replaceAll(constructorRegex,
-        '''registry() async{\n\t\t${repositoriesBlockMatch?.group(1)}\n\t\t await CreatePersonalAccessTokensTable().up();\n\t}''');
+        '''registry() async{\n\t\t await CreatePersonalAccessTokensTable().up();\n\t\t${repositoriesBlockMatch?.group(1)}\n\t}''');
     migrate.writeAsStringSync(migrateFileContents);
 
     print(' \x1B[44m\x1B[37m INFO \x1B[0m Auth created successfully.');
