@@ -36,7 +36,6 @@ void main(List<String> args) async {
 		await MigrationConnection().setup();
   if (args.isNotEmpty && args.first.toLowerCase() == "migrate:fresh") {
     await Migrate().dropTables();
-    await Migrate().registry();
   } else {
     await Migrate().registry();
   }
@@ -76,7 +75,7 @@ class CreateMigrationCommand implements Command {
       exit(0);
     }
 
-    String migrationName = arguments[0];
+    String migrationName = arguments[0].toLowerCase();
 
     String filePath =
         '${Directory.current.path}/lib/database/migrations/${pascalToSnake(migrationName)}.dart';
@@ -136,14 +135,11 @@ class CreateMigrationCommand implements Command {
       );
     }
 
-
     if (dropTableRepositoriesBlockMatch != null) {
       migrateFileContents = migrateFileContents.replaceAll(
         dropTableConstructorRegex,
         '''dropTables() async {\n\t\t await ${migrationName.pascalCase}().down();\n\t\t ${dropTableRepositoriesBlockMatch.group(1)}\n\t }''',
       );
-    }else{
-      migrateFileContents = '''$migrateFileContents\n\ndropTables() async {\n\t\t await ${migrationName.pascalCase}().down();\n\t }''';
     }
 
     // Write modified content back to file

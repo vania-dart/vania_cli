@@ -4,6 +4,7 @@ import '../service/service.dart';
 import 'auth_command.dart';
 import 'build_command.dart';
 import 'command.dart';
+import 'create_alter_table_migration_command.dart';
 import 'create_controller_command.dart';
 import 'create_database_seeder_command.dart';
 import 'create_mail_command.dart';
@@ -31,6 +32,7 @@ class CommandRunner {
     'make:controller': CreateControllerCommand(),
     'make:middleware': CreateMiddlewareCommand(),
     'make:migration': CreateMigrationCommand(),
+    'make:migration-alter': CreateAlterTableMigrationCommand(),
     'make:model': CreateModelCommand(),
     'make:mail': CreateMailCommand(),
     'make:provider': CreateServiceProviderCommand(),

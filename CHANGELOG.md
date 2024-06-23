@@ -1,3 +1,8 @@
+## 1.3.0
+
+- Fix migration deop table
+- Add create new alter table migration
+
 ## 1.2.1
 
 - Fix migration filename extensions

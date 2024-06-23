@@ -62,7 +62,7 @@ class CreateDatabaseSeederCommand implements Command {
       exit(0);
     }
 
-    List fileName = arguments[0].split(RegExp(r'[/]'));
+    List fileName = arguments[0].toLowerCase().split(RegExp(r'[/]'));
 
     String seederName = fileName[fileName.length - 1];
 
