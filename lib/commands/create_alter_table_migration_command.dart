@@ -18,10 +18,12 @@ class MigrationALterNameClass extends Migration {
       
     });
   }
+
   
   @override
-  Future<void> down() async{
+  Future<void> down() {
     super.down();
+    throw UnimplementedError();
   }
 }
 
@@ -35,6 +37,7 @@ import '../../config/database.dart';
 void main(List<String> args) async {
 		 await MigrationConnection().setup(database);
   if (args.isNotEmpty && args.first.toLowerCase() == "migrate:fresh") {
+    await MigrationConnection().truncateMigration();
     await Migrate().dropTables();
   } else {
     await Migrate().registry();
