@@ -34,7 +34,8 @@ class CreateServiceProviderCommand implements Command {
 
     if (!alphaRegex.hasMatch(arguments[0])) {
       print(
-          ' \x1B[41m\x1B[37m ERROR \x1B[0m Service Provider must contain only letters a-z, numbers 0-9 and optional _');
+        ' \x1B[41m\x1B[37m ERROR \x1B[0m Service Provider must contain only letters a-z, numbers 0-9 and optional _',
+      );
       exit(0);
     }
 
@@ -52,11 +53,14 @@ class CreateServiceProviderCommand implements Command {
     newFile.createSync(recursive: true);
 
     String str = serviceProviderStub.replaceAll(
-        'ServiceProviderName', providerName.pascalCase);
+      'ServiceProviderName',
+      providerName.pascalCase,
+    );
 
     newFile.writeAsString(str);
 
     print(
-        ' \x1B[44m\x1B[37m INFO \x1B[0m Service Provider [$filePath] created successfully.');
+      ' \x1B[44m\x1B[37m INFO \x1B[0m Service Provider [$filePath] created successfully.',
+    );
   }
 }

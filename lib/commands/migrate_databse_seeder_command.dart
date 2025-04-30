@@ -13,13 +13,10 @@ class MigrateDatabaseSeederCommand implements Command {
   @override
   void execute(List<String> arguments) async {
     stdout.writeln('\x1B[32m Database seed started \x1B[0m');
-    Process process = await Process.start(
-      'dart',
-      [
-        'run',
-        '${Directory.current.path}/lib/database/seeders/database_seeder.dart'
-      ],
-    );
+    Process process = await Process.start('dart', [
+      'run',
+      '${Directory.current.path}/lib/database/seeders/database_seeder.dart',
+    ]);
 
     await for (var data in process.stdout.transform(utf8.decoder)) {
       List lines = data.split("\n");

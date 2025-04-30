@@ -44,15 +44,17 @@ class AuthCommand extends Command {
 
     if (newFile.existsSync()) {
       print(
-          ' \x1B[41m\x1B[37m ERROR \x1B[0m Personal access tokens migration already exists.');
+        ' \x1B[41m\x1B[37m ERROR \x1B[0m Personal access tokens migration already exists.',
+      );
       exit(0);
     }
 
     newFile.createSync(recursive: true);
     newFile.writeAsString(authMigrationContent);
 
-    File migrate =
-        File('${Directory.current.path}/lib/database/migrations/migrate.dart');
+    File migrate = File(
+      '${Directory.current.path}/lib/database/migrations/migrate.dart',
+    );
 
     String migrateFileContents = migrate.readAsStringSync();
 
@@ -60,17 +62,22 @@ class AuthCommand extends Command {
     var importMatch = importRegExp.allMatches(migrateFileContents);
 
     migrateFileContents = migrateFileContents.replaceFirst(
-        importMatch.last.group(0).toString(),
-        "${importMatch.last.group(0).toString()}\nimport '${filePath}create_personal_access_tokens_table.dart';");
+      importMatch.last.group(0).toString(),
+      "${importMatch.last.group(0).toString()}\nimport '${filePath}create_personal_access_tokens_table.dart';",
+    );
 
-    final constructorRegex =
-        RegExp(r'registry\s*\(\s*\)\s*async?\s*\{\s*([\s\S]*?)\s*\}');
+    final constructorRegex = RegExp(
+      r'registry\s*\(\s*\)\s*async?\s*\{\s*([\s\S]*?)\s*\}',
+    );
 
-    Match? repositoriesBlockMatch =
-        constructorRegex.firstMatch(migrateFileContents);
+    Match? repositoriesBlockMatch = constructorRegex.firstMatch(
+      migrateFileContents,
+    );
 
-    migrateFileContents = migrateFileContents.replaceAll(constructorRegex,
-        '''registry() async{\n\t\t await CreatePersonalAccessTokensTable().up();\n\t\t${repositoriesBlockMatch?.group(1)}\n\t}''');
+    migrateFileContents = migrateFileContents.replaceAll(
+      constructorRegex,
+      '''registry() async{\n\t\t await CreatePersonalAccessTokensTable().up();\n\t\t${repositoriesBlockMatch?.group(1)}\n\t}''',
+    );
     migrate.writeAsStringSync(migrateFileContents);
 
     print(' \x1B[44m\x1B[37m INFO \x1B[0m Auth created successfully.');

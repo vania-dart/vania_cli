@@ -32,7 +32,8 @@ class CreateMiddlewareCommand implements Command {
 
     if (!alphaRegex.hasMatch(arguments[0])) {
       print(
-          ' \x1B[41m\x1B[37m ERROR \x1B[0m Middleware must contain only letters a-z, numbers 0-9 and optional _');
+        ' \x1B[41m\x1B[37m ERROR \x1B[0m Middleware must contain only letters a-z, numbers 0-9 and optional _',
+      );
       exit(0);
     }
 
@@ -50,11 +51,14 @@ class CreateMiddlewareCommand implements Command {
     newFile.createSync(recursive: true);
 
     String str = middlewareStub.replaceFirst(
-        'MiddlewareName', middlewareName.pascalCase);
+      'MiddlewareName',
+      middlewareName.pascalCase,
+    );
 
     newFile.writeAsString(str);
 
     print(
-        ' \x1B[44m\x1B[37m INFO \x1B[0m Middleware [$filePath] created successfully.');
+      ' \x1B[44m\x1B[37m INFO \x1B[0m Middleware [$filePath] created successfully.',
+    );
   }
 }

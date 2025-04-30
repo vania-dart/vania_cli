@@ -46,7 +46,8 @@ class CommandRunner {
   void run(List<String> arguments) async {
     if (arguments.isEmpty) {
       print(
-          '\x1B[32m -V, --version  \x1B[0m\tDisplay this application version');
+        '\x1B[32m -V, --version  \x1B[0m\tDisplay this application version',
+      );
 
       int longestCommandLength =
           _commands.keys.reduce((a, b) => a.length > b.length ? a : b).length;
@@ -72,14 +73,16 @@ class CommandRunner {
 
     if (command == null) {
       print(
-          ' \x1B[41m\x1B[37m ERROR \x1B[0m Command "$commandName" is not defined.');
+        ' \x1B[41m\x1B[37m ERROR \x1B[0m Command "$commandName" is not defined.',
+      );
       return;
     }
 
     if (!Directory('${Directory.current.path}/lib').existsSync() &&
         !(commandName == 'create' || commandName == 'update')) {
       print(
-          '\x1B[41m\x1B[37m ERROR \x1B[0m Please run this command from the root directory of the Vania project');
+        '\x1B[41m\x1B[37m ERROR \x1B[0m Please run this command from the root directory of the Vania project',
+      );
       exit(0);
     }
 

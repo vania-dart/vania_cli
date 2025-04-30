@@ -46,11 +46,13 @@ Future<void> updateDartToolVaniaConfig(Map<String, dynamic> config) async {
 
 FutureOr<File?> getDartToolVaniaConfigFile() async {
   try {
-    final Directory dartToolDir =
-        Directory('${Directory.current.path}/.dart_tool');
+    final Directory dartToolDir = Directory(
+      '${Directory.current.path}/.dart_tool',
+    );
     if (dartToolDir.existsSync()) {
-      final configFile =
-          File(path.join(dartToolDir.path, Constants.vaniaConfigFile));
+      final configFile = File(
+        path.join(dartToolDir.path, Constants.vaniaConfigFile),
+      );
       if (configFile.existsSync()) {
         return configFile;
       } else {

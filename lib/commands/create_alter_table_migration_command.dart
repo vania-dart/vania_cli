@@ -61,49 +61,32 @@ class CreateAlterTableMigrationCommand implements Command {
       'Create a new alter table migration file. This command allows you to add a new column to an existing table or alter an existing column';
 
   String _readMigrationName() {
-    final name =
-        Input.withTheme(
-          theme: Theme.defaultTheme,
-          prompt: 'What should the migration be named?',
-          defaultValue: 'interact',
-          validator: (x) {
-            if (x.contains(RegExp(r'^[a-zA-Z][a-zA-Z0-9_/\\]*$'))) {
-              throw ValidationError(
-                'Migration must contain only letters a-z, numbers 0-9 and optional _',
-              );
-            }
-            return true;
-          },
-        ).interact();
-
-    if (name.isEmpty) {
-      return _readMigrationName();
-    }
-    return name;
+    return Input.withTheme(
+      theme: Theme.defaultTheme,
+      prompt: 'What should the migration be named?',
+      validator: (x) {
+        if (x.contains(RegExp(r'^[a-zA-Z][a-zA-Z0-9_/\\]*$'))) {
+          throw ValidationError(
+            'Migration must contain only letters a-z, numbers 0-9 and optional _',
+          );
+        }
+        return true;
+      },
+    ).interact();
   }
 
   String _readTableName() {
-final name =
-        Input.withTheme(
-          theme: Theme.defaultTheme,
-          prompt: 'To which table should this column be added?',
-          defaultValue: 'interact',
-        ).interact();
-
-    if (name.isEmpty) {
-      return _readTableName();
-    }
-    return name;
+    return Input.withTheme(
+      theme: Theme.defaultTheme,
+      prompt: 'To which table should this column be added?',
+    ).interact();
   }
 
   @override
   void execute(List<String> arguments) {
-
-
-
     if (arguments.isEmpty) {
       arguments.add(_readMigrationName());
-    } 
+    }
 
     String migrationName = arguments[0].toLowerCase();
 

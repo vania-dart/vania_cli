@@ -13,8 +13,13 @@ class BuildCommand extends Command {
   @override
   void execute(List<String> arguments) async {
     print("\x1B[32m Starting to build... \x1B[0m");
-    var process = await Process.start(
-        'dart', ['compile', 'exe', 'bin/server.dart', '-o', 'bin/server']);
+    var process = await Process.start('dart', [
+      'compile',
+      'exe',
+      'bin/server.dart',
+      '-o',
+      'bin/server',
+    ]);
 
     process.stdout.transform(utf8.decoder).listen((data) {
       List lines = data.split("\n");

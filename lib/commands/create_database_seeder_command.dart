@@ -58,7 +58,8 @@ class CreateDatabaseSeederCommand implements Command {
 
     if (!alphaRegex.hasMatch(arguments[0])) {
       print(
-          ' \x1B[41m\x1B[37m ERROR \x1B[0m Seeder must contain only letters a-z, numbers 0-9 and optional _');
+        ' \x1B[41m\x1B[37m ERROR \x1B[0m Seeder must contain only letters a-z, numbers 0-9 and optional _',
+      );
       exit(0);
     }
 
@@ -91,7 +92,8 @@ class CreateDatabaseSeederCommand implements Command {
 
     ///Register new seeder file into main database seeder file
     File databaseSeederFile = File(
-        '${Directory.current.path}/lib/database/seeders/database_seeder.dart');
+      '${Directory.current.path}/lib/database/seeders/database_seeder.dart',
+    );
 
     if (!databaseSeederFile.existsSync()) {
       databaseSeederFile.createSync(recursive: true);
@@ -103,20 +105,26 @@ class CreateDatabaseSeederCommand implements Command {
     var importMatch = importRegExp.allMatches(seedersFileContents);
 
     seedersFileContents = seedersFileContents.replaceFirst(
-        importMatch.last.group(0).toString(),
-        "${importMatch.last.group(0).toString()}\nimport '${seederName.snakeCase}.dart';");
+      importMatch.last.group(0).toString(),
+      "${importMatch.last.group(0).toString()}\nimport '${seederName.snakeCase}.dart';",
+    );
 
-    final constructorRegex =
-        RegExp(r'registry\s*\(\s*\)\s*async?\s*\{\s*([\s\S]*?)\s*\}');
+    final constructorRegex = RegExp(
+      r'registry\s*\(\s*\)\s*async?\s*\{\s*([\s\S]*?)\s*\}',
+    );
 
-    Match? repositoriesBlockMatch =
-        constructorRegex.firstMatch(seedersFileContents);
+    Match? repositoriesBlockMatch = constructorRegex.firstMatch(
+      seedersFileContents,
+    );
 
-    seedersFileContents = seedersFileContents.replaceAll(constructorRegex,
-        '''registry() async{\n\t\t${repositoriesBlockMatch?.group(1)}\n\t\t await ${seederName.pascalCase}().run();\n\t}''');
+    seedersFileContents = seedersFileContents.replaceAll(
+      constructorRegex,
+      '''registry() async{\n\t\t${repositoriesBlockMatch?.group(1)}\n\t\t await ${seederName.pascalCase}().run();\n\t}''',
+    );
     databaseSeederFile.writeAsStringSync(seedersFileContents);
 
     print(
-        ' \x1B[44m\x1B[37m INFO \x1B[0m Seeder [$controllerPath] created successfully.');
+      ' \x1B[44m\x1B[37m INFO \x1B[0m Seeder [$controllerPath] created successfully.',
+    );
   }
 }

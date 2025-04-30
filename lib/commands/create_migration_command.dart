@@ -72,7 +72,8 @@ class CreateMigrationCommand implements Command {
 
     if (!alphaRegex.hasMatch(arguments[0])) {
       stdout.writeln(
-          ' \x1B[41m\x1B[37m ERROR \x1B[0m Migration must contain only letters a-z, numbers 0-9 and optional _');
+        ' \x1B[41m\x1B[37m ERROR \x1B[0m Migration must contain only letters a-z, numbers 0-9 and optional _',
+      );
       exit(0);
     }
 
@@ -83,15 +84,20 @@ class CreateMigrationCommand implements Command {
     File newFile = File(filePath);
 
     if (newFile.existsSync()) {
-      stdout
-          .writeln(' \x1B[41m\x1B[37m ERROR \x1B[0m Migration already exists.');
+      stdout.writeln(
+        ' \x1B[41m\x1B[37m ERROR \x1B[0m Migration already exists.',
+      );
       exit(0);
     }
 
     newFile.createSync(recursive: true);
 
-    String tableName =
-        Pluralize().make(migrationName.replaceAll('create_', '').replaceAll('_table', '').toLowerCase());
+    String tableName = Pluralize().make(
+      migrationName
+          .replaceAll('create_', '')
+          .replaceAll('_table', '')
+          .toLowerCase(),
+    );
     String str = migrationStub
         .replaceFirst('MigrationName', snakeToPascal(migrationName))
         .replaceFirst('TableName', tableName)
@@ -99,8 +105,9 @@ class CreateMigrationCommand implements Command {
 
     newFile.writeAsString(str);
 
-    File migrate =
-        File('${Directory.current.path}/lib/database/migrations/migrate.dart');
+    File migrate = File(
+      '${Directory.current.path}/lib/database/migrations/migrate.dart',
+    );
 
     if (!migrate.existsSync()) {
       migrate.createSync(recursive: true);
@@ -109,10 +116,12 @@ class CreateMigrationCommand implements Command {
     }
 
     final importRegExp = RegExp(r'import .+;');
-    final registryConstructorRegex =
-        RegExp(r'registry\s*\(\s*\)\s*async?\s*\{\s*([\s\S]*?)\s*\}');
-    final dropTableConstructorRegex =
-        RegExp(r'dropTables\s*\(\s*\)\s*async?\s*\{\s*([\s\S]*?)\s*\}');
+    final registryConstructorRegex = RegExp(
+      r'registry\s*\(\s*\)\s*async?\s*\{\s*([\s\S]*?)\s*\}',
+    );
+    final dropTableConstructorRegex = RegExp(
+      r'dropTables\s*\(\s*\)\s*async?\s*\{\s*([\s\S]*?)\s*\}',
+    );
 
     // Find import statement and append new import
     var importMatch = importRegExp.allMatches(migrateFileContents);
@@ -124,10 +133,11 @@ class CreateMigrationCommand implements Command {
     }
 
     // Find registry and dropTables constructors, and replace with modified versions
-    Match? registryRepositoriesBlockMatch =
-        registryConstructorRegex.firstMatch(migrateFileContents);
-    Match? dropTableRepositoriesBlockMatch =
-        dropTableConstructorRegex.firstMatch(migrateFileContents);
+    Match? registryRepositoriesBlockMatch = registryConstructorRegex.firstMatch(
+      migrateFileContents,
+    );
+    Match? dropTableRepositoriesBlockMatch = dropTableConstructorRegex
+        .firstMatch(migrateFileContents);
 
     if (registryRepositoriesBlockMatch != null) {
       migrateFileContents = migrateFileContents.replaceAll(
@@ -147,6 +157,7 @@ class CreateMigrationCommand implements Command {
     migrate.writeAsStringSync(migrateFileContents);
 
     stdout.writeln(
-        ' \x1B[44m\x1B[37m INFO \x1B[0m Migration [$filePath] created successfully.');
+      ' \x1B[44m\x1B[37m INFO \x1B[0m Migration [$filePath] created successfully.',
+    );
   }
 }

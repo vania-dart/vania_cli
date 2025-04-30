@@ -35,8 +35,11 @@ class TerminateOpenPortCommand extends Command {
             final parts = line.trim().split(RegExp(r'\s+'));
             if (parts.length >= 5) {
               final pid = parts[4];
-              final taskkillResult =
-                  await Process.run('taskkill', ['/PID', pid, '/F']);
+              final taskkillResult = await Process.run('taskkill', [
+                '/PID',
+                pid,
+                '/F',
+              ]);
               if (taskkillResult.exitCode == 0) {
                 print('Killed process $pid on port $port');
               } else {
