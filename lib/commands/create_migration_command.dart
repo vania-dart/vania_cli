@@ -1,12 +1,13 @@
 import 'dart:io';
 
 import 'package:vania_cli/common/recase.dart';
+import 'package:vania_cli/utils/_pluralize.dart';
 import 'package:vania_cli/utils/functions.dart';
 
 import 'command.dart';
 
 String migrationStub = '''
-import 'package:vania/vania.dart';
+import 'package:vania/database/database.dart';
 
 class MigrationName extends Migration {
 
@@ -29,11 +30,11 @@ class MigrationName extends Migration {
 
 String migrateFileContents = '''
 import 'dart:io';
-
-import 'package:vania/vania.dart';
+import 'package:vania/database/database.dart';
+import '../../config/database.dart';
 
 void main(List<String> args) async {
-		await MigrationConnection().setup();
+	 await MigrationConnection().setup(database);
   if (args.isNotEmpty && args.first.toLowerCase() == "migrate:fresh") {
     await Migrate().dropTables();
   } else {
@@ -90,7 +91,7 @@ class CreateMigrationCommand implements Command {
     newFile.createSync(recursive: true);
 
     String tableName =
-        migrationName.replaceAll('create_', '').replaceAll('_table', '');
+        Pluralize().make(migrationName.replaceAll('create_', '').replaceAll('_table', '').toLowerCase());
     String str = migrationStub
         .replaceFirst('MigrationName', snakeToPascal(migrationName))
         .replaceFirst('TableName', tableName)

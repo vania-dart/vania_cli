@@ -1,12 +1,13 @@
 import 'dart:io';
 
 import 'package:vania_cli/common/recase.dart';
+import 'package:vania_cli/utils/_pluralize.dart';
 import 'package:vania_cli/utils/functions.dart';
 
 import 'command.dart';
 
 String migrationStub = '''
-import 'package:vania/vania.dart';
+import 'package:vania/database/database.dart';
 
 class MigrationALterNameClass extends Migration {
   @override
@@ -27,8 +28,8 @@ class MigrationALterNameClass extends Migration {
 
 String migrateFileContents = '''
 import 'dart:io';
-
-import 'package:vania/vania.dart';
+import 'package:vania/database/database.dart';
+import '../../config/database.dart';
 
 void main(List<String> args) async {
 		await MigrationConnection().setup();
@@ -82,7 +83,7 @@ class CreateAlterTableMigrationCommand implements Command {
       arguments.add(stdin.readLineSync()!);
     }
 
-    String tableName = arguments[1].toLowerCase();
+    String tableName = Pluralize().make(arguments[1].toLowerCase());
 
     String filePath =
         '${Directory.current.path}/lib/database/migrations/${pascalToSnake(migrationName)}.dart';
