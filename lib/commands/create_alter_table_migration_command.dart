@@ -33,7 +33,7 @@ import 'package:vania/database/database.dart';
 import '../../config/database.dart';
 
 void main(List<String> args) async {
-		await MigrationConnection().setup();
+		 await MigrationConnection().setup(database);
   if (args.isNotEmpty && args.first.toLowerCase() == "migrate:fresh") {
     await Migrate().dropTables();
   } else {
@@ -65,7 +65,6 @@ class CreateAlterTableMigrationCommand implements Command {
       theme: Theme.defaultTheme,
       prompt: 'What should the migration be named?',
       validator: (x) {
-        print(x);
         if (!RegExp(r'^[a-zA-Z][a-zA-Z0-9_/\\]*$').hasMatch(x)) {
           throw ValidationError(
             'Migration must contain only letters a-z, numbers 0-9 and optional _',
@@ -96,11 +95,6 @@ class CreateAlterTableMigrationCommand implements Command {
 
   @override
   void execute(List<String> arguments) {
-    print(
-      RegExp(
-        r'^[a-zA-Z][a-zA-Z0-9_/\\]*$',
-      ).hasMatch('add_manager_id_to_demartmennts_table'),
-    );
     if (arguments.isEmpty) {
       arguments.add(_readMigrationName());
     }
