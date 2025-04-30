@@ -18,13 +18,13 @@ class MigrateDatabaseSeederCommand implements Command {
       '${Directory.current.path}/lib/database/seeders/database_seeder.dart',
     ]);
 
-    await for (var data in process.stdout.transform(utf8.decoder)) {
+    process.stderr.transform(utf8.decoder).listen((data) {
       List lines = data.split("\n");
       for (String line in lines) {
         if (line.isNotEmpty) {
           stdout.writeln(line);
         }
       }
-    }
+    });
   }
 }

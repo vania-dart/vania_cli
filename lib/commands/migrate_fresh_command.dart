@@ -35,5 +35,14 @@ class MigrateFreshCommand implements Command {
           stdout.writeln('\n\n\x1B[42m SUCCESS \x1B[0m All done!');
           CommandRunner().run(["migrate"]);
         });
+
+    process.stderr.transform(utf8.decoder).listen((data) {
+      List lines = data.split("\n");
+      for (String line in lines) {
+        if (line.isNotEmpty) {
+          stdout.writeln(line);
+        }
+      }
+    });
   }
 }
