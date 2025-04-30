@@ -70,6 +70,11 @@ class CreateAlterTableMigrationCommand implements Command {
             'Migration must contain only letters a-z, numbers 0-9 and optional _',
           );
         }
+        if (x.isEmpty) {
+          throw ValidationError(
+            'Select a name for your migration file',
+          );
+        }
         return true;
       },
     ).interact();
@@ -79,6 +84,14 @@ class CreateAlterTableMigrationCommand implements Command {
     return Input.withTheme(
       theme: Theme.defaultTheme,
       prompt: 'To which table should this column be added?',
+       validator: (x) {
+        if (x.isEmpty) {
+          throw ValidationError(
+            'Specify to which table you want to add the column (fill in the table name)',
+          );
+        }
+        return true;
+      },
     ).interact();
   }
 
