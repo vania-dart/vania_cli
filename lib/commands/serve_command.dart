@@ -120,7 +120,7 @@ class ServeCommand implements Command {
         ...arguments,
       ]);
     } else {
-      arguments.remove(vm);
+      arguments.remove('--vm');
       process = await Process.start('dart', [
         'run',
         vm,
