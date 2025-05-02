@@ -5,6 +5,8 @@ import 'package:path/path.dart' as path;
 import 'package:vania_cli/utils/functions.dart';
 import 'package:watcher/watcher.dart';
 import 'command.dart';
+import 'command_runner.dart';
+import 'terminate_port_command.dart';
 
 class ServeCommand implements Command {
   @override
@@ -23,12 +25,14 @@ class ServeCommand implements Command {
       vmService = '--enable-vm-service';
     }
 
-    Process? process = await _serve(vmService);
+    Process? process = await _serve(vmService, arguments);
 
     print('Vania run key commands');
     print('R Hot restart');
     print('c Clear the screen');
     print('q Quit (terminate the application)');
+
+    await TerminateOpenPortCommand().runCommand();
 
     /// save process info on `.dartTool` folder for upcoming serve features
     /// like down, up, etc
@@ -36,6 +40,7 @@ class ServeCommand implements Command {
 
     watcher.events.listen((event) async {
       if (path.extension(event.path) == '.dart') {
+        await TerminateOpenPortCommand().runCommand();
         stdout.write('\x1B[2J\x1B[0;0H');
         print("\x1B[32m File changed: ${path.basename(event.path)} \x1B[0m");
         print("Restarting the server....");
@@ -45,7 +50,7 @@ class ServeCommand implements Command {
             process?.kill();
             int? exitCode = await process?.exitCode;
             if (exitCode.toString().isNotEmpty) {
-              process = await _serve(vmService);
+              process = await _serve(vmService, arguments);
             }
           } catch (e) {
             print("\x1B[31mAn error occurred: $e\x1B[0m");
@@ -76,7 +81,7 @@ class ServeCommand implements Command {
             process?.kill();
             int? exitCode = await process?.exitCode;
             if (exitCode.toString().isNotEmpty) {
-              process = await _serve(vmService);
+              process = await _serve(vmService, arguments);
             }
           } catch (e) {
             print("\x1B[31mAn error occurred: $e\x1B[0m");
@@ -96,13 +101,23 @@ class ServeCommand implements Command {
     });
   }
 
-  Future<Process> _serve(String? vm) async {
+  Future<Process> _serve(String? vm, List<String> arguments) async {
     Process process;
-
+    print(['run', 'bin/server.dart', ...arguments]);
     if (vm == null) {
-      process = await Process.start('dart', ['run', 'bin/server.dart']);
+      process = await Process.start('dart', [
+        'run',
+        'bin/server.dart',
+        ...arguments,
+      ]);
     } else {
-      process = await Process.start('dart', ['run', vm, 'bin/server.dart']);
+      arguments.remove(vm);
+      process = await Process.start('dart', [
+        'run',
+        vm,
+        'bin/server.dart',
+        ...arguments,
+      ]);
     }
 
     process.stdout.transform(utf8.decoder).listen((data) {

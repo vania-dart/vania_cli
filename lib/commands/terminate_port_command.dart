@@ -13,16 +13,20 @@ class TerminateOpenPortCommand extends Command {
 
   @override
   void execute(List<String> arguments) async {
+    await runCommand();
+    print('Port Terminated');
+    exit(0);
+  }
+
+  Future<void> runCommand() async {
     Env().load();
     if (Platform.isWindows) {
-      await _killPortOnWindows(Env.get<int>('APP_PORT', 300));
+      await _killPortOnWindows(Env.get<int>('APP_PORT', 8000));
     } else if (Platform.isLinux || Platform.isMacOS) {
-      await _killPortOnUnix(Env.get<int>('APP_PORT', 3000));
+      await _killPortOnUnix(Env.get<int>('APP_PORT', 8000));
     } else {
       throw UnsupportedError('Unsupported platform');
     }
-    print('Done');
-    exit(0);
   }
 
   Future<void> _killPortOnWindows(int port) async {
@@ -42,8 +46,6 @@ class TerminateOpenPortCommand extends Command {
               ]);
               if (taskkillResult.exitCode == 0) {
                 print('Killed process $pid on port $port');
-              } else {
-                print('Failed to kill process $pid: ${taskkillResult.stderr}');
               }
               break;
             }
@@ -69,8 +71,6 @@ class TerminateOpenPortCommand extends Command {
             final killResult = await Process.run('kill', ['-9', pid]);
             if (killResult.exitCode == 0) {
               print('Killed process $pid on port $port');
-            } else {
-              print('Failed to kill process $pid: ${killResult.stderr}');
             }
             break;
           }
