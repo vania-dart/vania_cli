@@ -18,12 +18,12 @@ class TerminateOpenPortCommand extends Command {
     exit(0);
   }
 
-  Future<void> runCommand() async {
+  Future<void> runCommand([int? port]) async {
     Env().load();
     if (Platform.isWindows) {
-      await _killPortOnWindows(Env.get<int>('APP_PORT', 8000));
+      await _killPortOnWindows(port ?? Env.get<int>('APP_PORT', 8000));
     } else if (Platform.isLinux || Platform.isMacOS) {
-      await _killPortOnUnix(Env.get<int>('APP_PORT', 8000));
+      await _killPortOnUnix(port ?? Env.get<int>('APP_PORT', 8000));
     } else {
       throw UnsupportedError('Unsupported platform');
     }

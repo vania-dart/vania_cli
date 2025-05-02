@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:args/args.dart';
 import 'package:path/path.dart' as path;
 import 'package:vania_cli/utils/functions.dart';
 import 'package:watcher/watcher.dart';
 import 'command.dart';
-import 'command_runner.dart';
 import 'terminate_port_command.dart';
 
 class ServeCommand implements Command {
@@ -20,6 +20,12 @@ class ServeCommand implements Command {
   void execute(List<String> arguments) async {
     DirectoryWatcher watcher = DirectoryWatcher(Directory.current.path);
 
+    final parser = ArgParser()..addOption('port', abbr: 'p');
+    ArgResults? results;
+    try {
+      results = parser.parse(arguments);
+    } on ArgParserException catch (_) {}
+
     String? vmService;
     if (arguments.isNotEmpty && arguments[0].toLowerCase() == '--vm') {
       vmService = '--enable-vm-service';
@@ -32,7 +38,9 @@ class ServeCommand implements Command {
     print('c Clear the screen');
     print('q Quit (terminate the application)');
 
-    await TerminateOpenPortCommand().runCommand();
+    await TerminateOpenPortCommand().runCommand(
+      int.tryParse(results?['port'] ?? ''),
+    );
 
     /// save process info on `.dartTool` folder for upcoming serve features
     /// like down, up, etc
@@ -40,7 +48,9 @@ class ServeCommand implements Command {
 
     watcher.events.listen((event) async {
       if (path.extension(event.path) == '.dart') {
-        await TerminateOpenPortCommand().runCommand();
+        await TerminateOpenPortCommand().runCommand(
+          int.tryParse(results?['port'] ?? ''),
+        );
         stdout.write('\x1B[2J\x1B[0;0H');
         print("\x1B[32m File changed: ${path.basename(event.path)} \x1B[0m");
         print("Restarting the server....");
@@ -103,7 +113,6 @@ class ServeCommand implements Command {
 
   Future<Process> _serve(String? vm, List<String> arguments) async {
     Process process;
-    print(['run', 'bin/server.dart', ...arguments]);
     if (vm == null) {
       process = await Process.start('dart', [
         'run',
