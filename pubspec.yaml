@@ -15,7 +15,7 @@ dependencies:
   args: ^2.7.0
   interact_cli: ^2.4.0
   path: ^1.9.1
-  watcher: ^1.1.1
+  watcher: ^1.1.2
 
 dev_dependencies:
   lints: ^5.1.1
