@@ -5,7 +5,7 @@ import 'package:vania_cli/common/recase.dart';
 import 'command.dart';
 
 String seederStubs = '''
-import 'package:vania/vania.dart';
+import 'package:vania/database.dart';
 
 class seederName extends Seeder {
   @override
@@ -18,24 +18,47 @@ class seederName extends Seeder {
     }
   }
 }
+''';
 
+String seederWithFactoryStubs = '''
+import 'package:vania/database.dart';
+
+import '../factory/factoryFileName.dart';
+
+class seederName extends Seeder {
+  @override
+  Future<void> run() async {
+    try {
+      final data = factoryName().createMany(500);
+      // TODO: implement run
+      print("seederName call");
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+}
+''';
+
+String factoryStub = '''
+import 'package:vania/database.dart' show SeederFactory;
+
+class factoryName extends SeederFactory {
+  @override
+  Map<String, dynamic> definition() {
+    return {};
+  }
+}
 ''';
 
 String seedersFileContents = '''
-import 'dart:io';
-import 'package:vania/vania.dart';
+import 'package:vania/database.dart' show SeederRunner;
+
+import '../../config/database.dart';
 
 void main() async {
-  Env().load();
-  await DatabaseClient().setup();
-  await DatabaseSeeder().registry();
-  await DatabaseClient().database?.close();
-  exit(0);
-}
-
-class DatabaseSeeder {
-  registry() async {
-	}
+  await SeederRunner().setup(database: database, seeders: [
+    
+  ]);
 }
 ''';
 
@@ -54,13 +77,25 @@ class CreateDatabaseSeederCommand implements Command {
       arguments.add(stdin.readLineSync()!);
     }
 
-    RegExp alphaRegex = RegExp(r'^[a-zA-Z][a-zA-Z0-9_/\\]*$');
+    RegExp alphaRegex = RegExp(r'^[A-Za-z][A-Za-z_]*$');
 
     if (!alphaRegex.hasMatch(arguments[0])) {
       print(
-        ' \x1B[41m\x1B[37m ERROR \x1B[0m Seeder must contain only letters a-z, numbers 0-9 and optional _',
+        ' \x1B[41m\x1B[37m ERROR \x1B[0m Seeder must contain only letters a-z and optional _',
       );
       exit(0);
+    }
+
+    // Check for factory flag
+    String? factoryName;
+    bool hasFactory = false;
+    
+    for (int i = 0; i < arguments.length; i++) {
+      if (arguments[i] == '--factory' && i + 1 < arguments.length) {
+        factoryName = arguments[i + 1];
+        hasFactory = true;
+        break;
+      }
     }
 
     List fileName = arguments[0].toLowerCase().split(RegExp(r'[/]'));
@@ -86,7 +121,27 @@ class CreateDatabaseSeederCommand implements Command {
 
     newFile.createSync(recursive: true);
 
-    String str = seederStubs.replaceAll('seederName', seederName.pascalCase);
+    String str;
+    if (hasFactory && factoryName != null) {
+      // Create factory file first
+      String factoryPath = '${Directory.current.path}/lib/database/factory/${factoryName.snakeCase}.dart';
+      File factoryFile = File(factoryPath);
+      
+      if (!factoryFile.existsSync()) {
+        factoryFile.createSync(recursive: true);
+        String factoryContent = factoryStub.replaceAll('factoryName', factoryName.pascalCase);
+        factoryFile.writeAsString(factoryContent);
+        print(' \x1B[44m\x1B[37m INFO \x1B[0m Factory [$factoryPath] created successfully.');
+      }
+      
+      // Create seeder with factory
+      str = seederWithFactoryStubs
+          .replaceAll('seederName', seederName.pascalCase)
+          .replaceAll('factoryName', factoryName.pascalCase)
+          .replaceAll('factoryFileName', factoryName.snakeCase);
+    } else {
+      str = seederStubs.replaceAll('seederName', seederName.pascalCase);
+    }
 
     newFile.writeAsString(str);
 
@@ -102,25 +157,43 @@ class CreateDatabaseSeederCommand implements Command {
     }
 
     final importRegExp = RegExp(r'import .+;');
+    final seederRegisterRegex = RegExp(
+      r'seeders:\s*\[\s*([\s\S]*?)\s*\]',
+      multiLine: true,
+    );
+
+    // Find import statement and append new import
     var importMatch = importRegExp.allMatches(seedersFileContents);
+    if (importMatch.isNotEmpty) {
+      seedersFileContents = seedersFileContents.replaceFirst(
+        importMatch.last.group(0).toString(),
+        "${importMatch.last.group(0)}\nimport '${seederName.snakeCase}.dart';",
+      );
+    }
 
-    seedersFileContents = seedersFileContents.replaceFirst(
-      importMatch.last.group(0).toString(),
-      "${importMatch.last.group(0).toString()}\nimport '${seederName.snakeCase}.dart';",
-    );
-
-    final constructorRegex = RegExp(
-      r'registry\s*\(\s*\)\s*async?\s*\{\s*([\s\S]*?)\s*\}',
-    );
-
-    Match? repositoriesBlockMatch = constructorRegex.firstMatch(
+    // Find seeders array and replace with modified version
+    Match? seederRegisterMatch = seederRegisterRegex.firstMatch(
       seedersFileContents,
     );
 
-    seedersFileContents = seedersFileContents.replaceAll(
-      constructorRegex,
-      '''registry() async{\n\t\t${repositoriesBlockMatch?.group(1)}\n\t\t await ${seederName.pascalCase}().run();\n\t}''',
-    );
+    if (seederRegisterMatch != null) {
+      String existingSeeders = seederRegisterMatch.group(1)?.trim() ?? '';
+      String newSeeders;
+      
+      if (existingSeeders.isEmpty) {
+        newSeeders = '${seederName.pascalCase}()';
+      } else {
+        // Remove trailing comma if exists
+        existingSeeders = existingSeeders.replaceAll(RegExp(r',\s*$'), '');
+        newSeeders = '$existingSeeders,\n    ${seederName.pascalCase}()';
+      }
+      
+      seedersFileContents = seedersFileContents.replaceAll(
+        seederRegisterRegex,
+        'seeders: [\n    $newSeeders,\n  ]',
+      );
+    }
+
     databaseSeederFile.writeAsStringSync(seedersFileContents);
 
     print(

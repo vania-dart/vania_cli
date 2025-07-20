@@ -8,23 +8,19 @@ import 'package:vania_cli/utils/functions.dart';
 import 'command.dart';
 
 String migrationStub = '''
-import 'package:vania/database/database.dart';
+import 'package:vania/migration.dart';
 
 class MigrationALterNameClass extends Migration {
   @override
   Future<void> up() async {
-    super.up();
-    await alterColumn( 'TableName', (){
+    await alterColumn( 'users', (Schema table){
       
-    });
+    },afterColumn: 'email');
   }
 
   
   @override
-  Future<void> down() {
-    super.down();
-    throw UnimplementedError();
-  }
+  Future<void> down() async {}
 }
 
 ''';
@@ -35,22 +31,17 @@ import 'package:vania/database/database.dart';
 import '../../config/database.dart';
 
 void main(List<String> args) async {
-		 await MigrationConnection().setup(database);
-  if (args.isNotEmpty && args.first.toLowerCase() == "migrate:fresh") {
-    await MigrationConnection().truncateMigration();
-    await Migrate().dropTables();
-  } else {
-    await Migrate().registry();
-  }
-  await MigrationConnection().closeConnection();
-  exit(0);
-}
-
-class Migrate {
-  registry() async {
-  }
-
-  dropTables() async {
+  try {
+    await MigrationConnection().setup(database);
+    await MigrationRunner().migrationRegister([
+       
+    ]).run(args);
+    wait MigrationConnection().connection?.close();
+  } catch (e) {
+    print('Migration failed: \$e');
+    exit(0);
+  } finally {
+    exit(0);
   }
 }
 ''';
@@ -68,9 +59,9 @@ class CreateAlterTableMigrationCommand implements Command {
       theme: Theme.defaultTheme,
       prompt: 'What should the migration be named?',
       validator: (x) {
-        if (!RegExp(r'^[a-zA-Z][a-zA-Z0-9_/\\]*$').hasMatch(x)) {
+        if (!RegExp(r'^[A-Za-z][A-Za-z_]*$').hasMatch(x)) {
           throw ValidationError(
-            'Migration must contain only letters a-z, numbers 0-9 and optional _',
+            'Migration must contain only letters a-z and optional _',
           );
         }
         if (x.isEmpty) {
@@ -138,13 +129,13 @@ class CreateAlterTableMigrationCommand implements Command {
     } else {
       migrateFileContents = migrate.readAsStringSync();
     }
-
+    
     final importRegExp = RegExp(r'import .+;');
-    final registryConstructorRegex = RegExp(
-      r'registry\s*\(\s*\)\s*async?\s*\{\s*([\s\S]*?)\s*\}',
+    final migrationRegisterRegex = RegExp(
+      r'migrationRegister\s*\(\s*\[\s*([\s\S]*?)\s*\]\s*\)',
+      multiLine: true,
     );
 
-    // Find import statement and append new import
     var importMatch = importRegExp.allMatches(migrateFileContents);
     if (importMatch.isNotEmpty) {
       migrateFileContents = migrateFileContents.replaceFirst(
@@ -153,19 +144,27 @@ class CreateAlterTableMigrationCommand implements Command {
       );
     }
 
-    // Find registry and dropTables constructors, and replace with modified versions
-    Match? registryRepositoriesBlockMatch = registryConstructorRegex.firstMatch(
+    Match? migrationRegisterMatch = migrationRegisterRegex.firstMatch(
       migrateFileContents,
     );
 
-    if (registryRepositoriesBlockMatch != null) {
+    if (migrationRegisterMatch != null) {
+      String existingMigrations = migrationRegisterMatch.group(1)?.trim() ?? '';
+      String newMigrations;
+      
+      if (existingMigrations.isEmpty) {
+        newMigrations = '${migrationName.pascalCase}()';
+      } else {
+        existingMigrations = existingMigrations.replaceAll(RegExp(r',\s*$'), '');
+        newMigrations = '$existingMigrations,\n      ${migrationName.pascalCase}()';
+      }
+      
       migrateFileContents = migrateFileContents.replaceAll(
-        registryConstructorRegex,
-        '''registry() async {\n\t\t ${registryRepositoriesBlockMatch.group(1)}\n\t\t await ${migrationName.pascalCase}().up();\n\t}''',
+        migrationRegisterRegex,
+        'migrationRegister([\n      $newMigrations,\n    ])',
       );
     }
 
-    // Write modified content back to file
     migrate.writeAsStringSync(migrateFileContents);
 
     stdout.writeln(

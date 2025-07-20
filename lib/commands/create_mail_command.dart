@@ -4,7 +4,7 @@ import '../utils/functions.dart';
 import 'command.dart';
 
 String mailStub = '''
-import 'package:vania/vania.dart';
+import 'package:vania/mail.dart';
 
 class MailableName extends Mailable {
   final String to;
@@ -52,11 +52,11 @@ class CreateMailCommand implements Command {
       arguments.add(stdin.readLineSync()!);
     }
 
-    RegExp alphaRegex = RegExp(r'^[a-zA-Z][a-zA-Z0-9_/\\]*$');
+    RegExp alphaRegex = RegExp(r'^[A-Za-z][A-Za-z_]*$');
 
     if (!alphaRegex.hasMatch(arguments[0])) {
       print(
-        ' \x1B[41m\x1B[37m ERROR \x1B[0m Mailable must contain only letters a-z, numbers 0-9 and optional _',
+        ' \x1B[41m\x1B[37m ERROR \x1B[0m Mailable must contain only letters a-z and optional _',
       );
       exit(0);
     }

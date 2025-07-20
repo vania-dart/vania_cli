@@ -1,24 +1,28 @@
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:vania_cli/commands/command_runner.dart';
-
 import 'command.dart';
 
 class MigrateFreshCommand implements Command {
+
+  final String flag;
+  final String des;
+
+  MigrateFreshCommand({required this.flag,required this.des});
+
   @override
   String get name => "migrate:fresh";
 
   @override
-  String get description => "Drop all tables and re-run all migrations";
+  String get description => des;
 
   @override
   void execute(List<String> arguments) async {
-    stdout.writeln('\x1B[32m Dropping tables ........... \x1B[0m');
+    arguments.remove(flag);
     Process process = await Process.start('dart', [
       'run',
       '${Directory.current.path}/lib/database/migrations/migrate.dart',
-      'migrate:fresh',
+      flag,
+      ...arguments
     ]);
 
     process.stdout
@@ -30,10 +34,6 @@ class MigrateFreshCommand implements Command {
               stdout.write('\x1B[32m $line \x1B[0m\n');
             }
           }
-        })
-        .onDone(() {
-          stdout.writeln('\n\n\x1B[42m SUCCESS \x1B[0m All done!');
-          CommandRunner().run(["migrate"]);
         });
 
     process.stderr.transform(utf8.decoder).listen((data) {

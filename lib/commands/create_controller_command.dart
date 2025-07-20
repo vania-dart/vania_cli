@@ -4,7 +4,9 @@ import 'package:vania_cli/common/recase.dart';
 import 'command.dart';
 
 String controllerStubs = '''
-import 'package:vania/vania.dart';
+import 'package:vania/http/controller.dart';
+import 'package:vania/http/request.dart';
+import 'package:vania/http/response.dart';
 
 class controllerName extends Controller {
 
@@ -56,11 +58,11 @@ class CreateControllerCommand implements Command {
       arguments.add(stdin.readLineSync()!);
     }
 
-    RegExp alphaRegex = RegExp(r'^[a-zA-Z][a-zA-Z0-9_/\\]*$');
+    RegExp alphaRegex = RegExp(r'^[A-Za-z][A-Za-z_]*$');
 
     if (!alphaRegex.hasMatch(arguments[0])) {
       print(
-        ' \x1B[41m\x1B[37m ERROR \x1B[0m Controller must contain only letters a-z, numbers 0-9 and optional _',
+        ' \x1B[41m\x1B[37m ERROR \x1B[0m Controller must contain only letters a-z and optional _',
       );
       exit(0);
     }

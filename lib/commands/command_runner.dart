@@ -25,9 +25,9 @@ class CommandRunner {
   final Map<String, Command> _commands = {
     'serve': ServeCommand(),
     'create': NewProject(),
-    'down': ServeDownCommand(),
     'build': BuildCommand(),
-    'update': UpdateCommand(),
+    'down': ServeDownCommand(),
+    'db:seed': MigrateDatabaseSeederCommand(),
     'make:auth': AuthCommand(),
     'make:controller': CreateControllerCommand(),
     'make:middleware': CreateMiddlewareCommand(),
@@ -36,15 +36,42 @@ class CommandRunner {
     'make:model': CreateModelCommand(),
     'make:mail': CreateMailCommand(),
     'make:provider': CreateServiceProviderCommand(),
+    'make:seeder': CreateDatabaseSeederCommand(),
     'migrate': MigrateCommand(),
-    'db:seed': CreateDatabaseSeederCommand(),
-    'migrate:seed': MigrateDatabaseSeederCommand(),
-    'migrate:fresh': MigrateFreshCommand(),
+    'migrate:fresh': MigrateFreshCommand(
+      flag: '--fresh',
+      des: 'Drop all tables and re-run all migrations',
+    ),
+    'migrate:install': MigrateFreshCommand(
+      flag: '--install',
+      des: 'Create the migration repository',
+    ),
+    'migrate:refresh': MigrateFreshCommand(
+      flag: '--refresh',
+      des: 'Reset and re-run all migrations',
+    ),
+    'migrate:reset': MigrateFreshCommand(
+      flag: '--reset',
+      des: 'Rollback all database migrations',
+    ),
+    'migrate:rollback': MigrateFreshCommand(
+      flag: '--rollback',
+      des: 'Rollback the last database migration',
+    ),
+    'update': UpdateCommand(),
     'terminate-port': TerminateOpenPortCommand(),
   };
 
   void run(List<String> arguments) async {
     if (arguments.isEmpty) {
+          stdout.write('''\x1B[94m							 
+ _    __    ___     _   __    ____    ___ 
+| |  / /   /   |   / | / /   /  _/   /   |
+| | / /   / /| |  /  |/ /    / /    / /| |
+| |/ /   / ___ | / /|  /   _/ /    / ___ |
+|___/   /_/  |_|/_/ |_/   /___/   /_/  |_|                             
+\x1B[0m\t\t\n\n''');
+
       print(
         '\x1B[32m -V, --version  \x1B[0m\tDisplay this application version',
       );

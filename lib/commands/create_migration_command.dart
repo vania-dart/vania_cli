@@ -7,23 +7,20 @@ import 'package:vania_cli/utils/functions.dart';
 import 'command.dart';
 
 String migrationStub = '''
-import 'package:vania/database/database.dart';
+import 'package:vania/migration.dart';
 
 class MigrationName extends Migration {
-
   @override
-  Future<void> up() async{
-   super.up();
-   await createTableNotExists('TableName', () {
-      id();
-      timeStamps();
+  Future<void> up() async {
+    await create('TableName', (Schema table) {
+      table.id();
+      table.timeStamps();
     });
   }
-  
+
   @override
   Future<void> down() async {
-    super.down();
-    await dropIfExists('DropTableName');
+    await drop('DropTableName');
   }
 }
 ''';
@@ -34,22 +31,17 @@ import 'package:vania/database/database.dart';
 import '../../config/database.dart';
 
 void main(List<String> args) async {
-	 await MigrationConnection().setup(database);
-  if (args.isNotEmpty && args.first.toLowerCase() == "migrate:fresh") {
-    await MigrationConnection().truncateMigration();
-    await Migrate().dropTables();
-  } else {
-    await Migrate().registry();
-  }
-  await MigrationConnection().closeConnection();
-  exit(0);
-}
+  try {
+    await MigrationConnection().setup(database);
+    await MigrationRunner().migrationRegister([
 
-class Migrate {
-  registry() async {
-  }
-
-  dropTables() async {
+    ]).run(args);
+    wait MigrationConnection().connection?.close();
+  } catch (e) {
+    print('Migration failed: \$e');
+    exit(0);
+  } finally {
+    exit(0);
   }
 }
 ''';
@@ -69,11 +61,11 @@ class CreateMigrationCommand implements Command {
       arguments.add(stdin.readLineSync()!);
     }
 
-    RegExp alphaRegex = RegExp(r'^[a-zA-Z][a-zA-Z0-9_/\\]*$');
+    RegExp alphaRegex = RegExp(r'^[A-Za-z][A-Za-z_]*$');
 
     if (!alphaRegex.hasMatch(arguments[0])) {
       stdout.writeln(
-        ' \x1B[41m\x1B[37m ERROR \x1B[0m Migration must contain only letters a-z, numbers 0-9 and optional _',
+        ' \x1B[41m\x1B[37m ERROR \x1B[0m Migration must contain only letters a-z and optional _',
       );
       exit(0);
     }
@@ -117,11 +109,9 @@ class CreateMigrationCommand implements Command {
     }
 
     final importRegExp = RegExp(r'import .+;');
-    final registryConstructorRegex = RegExp(
-      r'registry\s*\(\s*\)\s*async?\s*\{\s*([\s\S]*?)\s*\}',
-    );
-    final dropTableConstructorRegex = RegExp(
-      r'dropTables\s*\(\s*\)\s*async?\s*\{\s*([\s\S]*?)\s*\}',
+    final migrationRegisterRegex = RegExp(
+      r'migrationRegister\s*\(\s*\[\s*([\s\S]*?)\s*\]\s*\)',
+      multiLine: true,
     );
 
     // Find import statement and append new import
@@ -133,24 +123,26 @@ class CreateMigrationCommand implements Command {
       );
     }
 
-    // Find registry and dropTables constructors, and replace with modified versions
-    Match? registryRepositoriesBlockMatch = registryConstructorRegex.firstMatch(
+    // Find migrationRegister array and replace with modified version
+    Match? migrationRegisterMatch = migrationRegisterRegex.firstMatch(
       migrateFileContents,
     );
-    Match? dropTableRepositoriesBlockMatch = dropTableConstructorRegex
-        .firstMatch(migrateFileContents);
 
-    if (registryRepositoriesBlockMatch != null) {
+    if (migrationRegisterMatch != null) {
+      String existingMigrations = migrationRegisterMatch.group(1)?.trim() ?? '';
+      String newMigrations;
+      
+      if (existingMigrations.isEmpty) {
+        newMigrations = '${migrationName.pascalCase}()';
+      } else {
+        // Remove trailing comma if exists
+        existingMigrations = existingMigrations.replaceAll(RegExp(r',\s*$'), '');
+        newMigrations = '$existingMigrations,\n      ${migrationName.pascalCase}()';
+      }
+      
       migrateFileContents = migrateFileContents.replaceAll(
-        registryConstructorRegex,
-        '''registry() async {\n\t\t ${registryRepositoriesBlockMatch.group(1)}\n\t\t await ${migrationName.pascalCase}().up();\n\t}''',
-      );
-    }
-
-    if (dropTableRepositoriesBlockMatch != null) {
-      migrateFileContents = migrateFileContents.replaceAll(
-        dropTableConstructorRegex,
-        '''dropTables() async {\n\t\t await ${migrationName.pascalCase}().down();\n\t\t ${dropTableRepositoriesBlockMatch.group(1)}\n\t }''',
+        migrationRegisterRegex,
+        'migrationRegister([\n      $newMigrations,\n    ])',
       );
     }
 
