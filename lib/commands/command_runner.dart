@@ -64,7 +64,7 @@ class CommandRunner {
 
   void run(List<String> arguments) async {
     if (arguments.isEmpty) {
-          stdout.write('''\x1B[94m							 
+      stdout.write('''\x1B[94m							 
  _    __    ___     _   __    ____    ___ 
 | |  / /   /   |   / | / /   /  _/   /   |
 | | / /   / /| |  /  |/ /    / /    / /| |

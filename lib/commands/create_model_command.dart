@@ -25,7 +25,6 @@ class CreateModelCommand implements Command {
       arguments.add(stdin.readLineSync()!);
     }
 
-
     RegExp alphaRegex = RegExp(r'^[A-Za-z][A-Za-z_]*$');
 
     if (!alphaRegex.hasMatch(arguments[0])) {
@@ -48,9 +47,7 @@ class CreateModelCommand implements Command {
 
     newFile.createSync(recursive: true);
 
-
-    String str = modelStub
-        .replaceAll('ModelName', modelName.pascalCase);
+    String str = modelStub.replaceAll('ModelName', modelName.pascalCase);
 
     newFile.writeAsString(str);
 

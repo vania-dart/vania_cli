@@ -89,7 +89,7 @@ class CreateDatabaseSeederCommand implements Command {
     // Check for factory flag
     String? factoryName;
     bool hasFactory = false;
-    
+
     for (int i = 0; i < arguments.length; i++) {
       if (arguments[i] == '--factory' && i + 1 < arguments.length) {
         factoryName = arguments[i + 1];
@@ -124,16 +124,22 @@ class CreateDatabaseSeederCommand implements Command {
     String str;
     if (hasFactory && factoryName != null) {
       // Create factory file first
-      String factoryPath = '${Directory.current.path}/lib/database/factory/${factoryName.snakeCase}.dart';
+      String factoryPath =
+          '${Directory.current.path}/lib/database/factory/${factoryName.snakeCase}.dart';
       File factoryFile = File(factoryPath);
-      
+
       if (!factoryFile.existsSync()) {
         factoryFile.createSync(recursive: true);
-        String factoryContent = factoryStub.replaceAll('factoryName', factoryName.pascalCase);
+        String factoryContent = factoryStub.replaceAll(
+          'factoryName',
+          factoryName.pascalCase,
+        );
         factoryFile.writeAsString(factoryContent);
-        print(' \x1B[44m\x1B[37m INFO \x1B[0m Factory [$factoryPath] created successfully.');
+        print(
+          ' \x1B[44m\x1B[37m INFO \x1B[0m Factory [$factoryPath] created successfully.',
+        );
       }
-      
+
       // Create seeder with factory
       str = seederWithFactoryStubs
           .replaceAll('seederName', seederName.pascalCase)
@@ -179,7 +185,7 @@ class CreateDatabaseSeederCommand implements Command {
     if (seederRegisterMatch != null) {
       String existingSeeders = seederRegisterMatch.group(1)?.trim() ?? '';
       String newSeeders;
-      
+
       if (existingSeeders.isEmpty) {
         newSeeders = '${seederName.pascalCase}()';
       } else {
@@ -187,7 +193,7 @@ class CreateDatabaseSeederCommand implements Command {
         existingSeeders = existingSeeders.replaceAll(RegExp(r',\s*$'), '');
         newSeeders = '$existingSeeders,\n    ${seederName.pascalCase}()';
       }
-      
+
       seedersFileContents = seedersFileContents.replaceAll(
         seederRegisterRegex,
         'seeders: [\n    $newSeeders,\n  ]',

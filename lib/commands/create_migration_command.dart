@@ -131,15 +131,19 @@ class CreateMigrationCommand implements Command {
     if (migrationRegisterMatch != null) {
       String existingMigrations = migrationRegisterMatch.group(1)?.trim() ?? '';
       String newMigrations;
-      
+
       if (existingMigrations.isEmpty) {
         newMigrations = '${migrationName.pascalCase}()';
       } else {
         // Remove trailing comma if exists
-        existingMigrations = existingMigrations.replaceAll(RegExp(r',\s*$'), '');
-        newMigrations = '$existingMigrations,\n      ${migrationName.pascalCase}()';
+        existingMigrations = existingMigrations.replaceAll(
+          RegExp(r',\s*$'),
+          '',
+        );
+        newMigrations =
+            '$existingMigrations,\n      ${migrationName.pascalCase}()';
       }
-      
+
       migrateFileContents = migrateFileContents.replaceAll(
         migrationRegisterRegex,
         'migrationRegister([\n      $newMigrations,\n    ])',

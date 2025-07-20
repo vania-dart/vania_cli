@@ -123,7 +123,11 @@ class NewProject implements Command {
             }
           }
         })
-        .onDone(() {
+        .onDone(() async {
+          if (selectedKit == 3) {
+            await Process.start('dart', ['pub', 'add', 'mongo_dart']);
+          }
+
           if (gitInit) {
             Process.runSync('git', ['init']);
           }
@@ -143,6 +147,7 @@ class NewProject implements Command {
             content = content
                 .replaceAll('applicationName', projectName)
                 .replaceAll('applicationKey', generateRandomKey());
+
             if ((selectedDB > 0 && selectedDB < 4) && selectedKit != 3) {
               String conn = '';
               switch (selectedDB) {

@@ -3,11 +3,10 @@ import 'dart:io';
 import 'command.dart';
 
 class MigrateFreshCommand implements Command {
-
   final String flag;
   final String des;
 
-  MigrateFreshCommand({required this.flag,required this.des});
+  MigrateFreshCommand({required this.flag, required this.des});
 
   @override
   String get name => "migrate:fresh";
@@ -22,19 +21,17 @@ class MigrateFreshCommand implements Command {
       'run',
       '${Directory.current.path}/lib/database/migrations/migrate.dart',
       flag,
-      ...arguments
+      ...arguments,
     ]);
 
-    process.stdout
-        .transform(utf8.decoder)
-        .listen((data) {
-          List lines = data.split("\n");
-          for (String line in lines) {
-            if (line.isNotEmpty) {
-              stdout.write('\x1B[32m $line \x1B[0m\n');
-            }
-          }
-        });
+    process.stdout.transform(utf8.decoder).listen((data) {
+      List lines = data.split("\n");
+      for (String line in lines) {
+        if (line.isNotEmpty) {
+          stdout.write('\x1B[32m $line \x1B[0m\n');
+        }
+      }
+    });
 
     process.stderr.transform(utf8.decoder).listen((data) {
       List lines = data.split("\n");

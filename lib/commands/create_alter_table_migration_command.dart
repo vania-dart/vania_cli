@@ -129,7 +129,7 @@ class CreateAlterTableMigrationCommand implements Command {
     } else {
       migrateFileContents = migrate.readAsStringSync();
     }
-    
+
     final importRegExp = RegExp(r'import .+;');
     final migrationRegisterRegex = RegExp(
       r'migrationRegister\s*\(\s*\[\s*([\s\S]*?)\s*\]\s*\)',
@@ -151,14 +151,18 @@ class CreateAlterTableMigrationCommand implements Command {
     if (migrationRegisterMatch != null) {
       String existingMigrations = migrationRegisterMatch.group(1)?.trim() ?? '';
       String newMigrations;
-      
+
       if (existingMigrations.isEmpty) {
         newMigrations = '${migrationName.pascalCase}()';
       } else {
-        existingMigrations = existingMigrations.replaceAll(RegExp(r',\s*$'), '');
-        newMigrations = '$existingMigrations,\n      ${migrationName.pascalCase}()';
+        existingMigrations = existingMigrations.replaceAll(
+          RegExp(r',\s*$'),
+          '',
+        );
+        newMigrations =
+            '$existingMigrations,\n      ${migrationName.pascalCase}()';
       }
-      
+
       migrateFileContents = migrateFileContents.replaceAll(
         migrationRegisterRegex,
         'migrationRegister([\n      $newMigrations,\n    ])',
