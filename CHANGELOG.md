@@ -1,3 +1,7 @@
+## 2.0.0
+
+- Integrated with `Vania` v1
+
 ## 1.3.0
 
 - Fix migration deop table
